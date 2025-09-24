@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Bienvenido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* Barra de navegación */
+    nav {
+      width: 100%;
+      background-color: rgba(0,0,0,0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffcc00;
+    }
+
+    /* Caja central de bienvenida */
+    .box {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      margin: 4rem auto 2rem auto;
+      max-width: 600px;
+    }
+
+    .box a {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 14px;
+      background: #fff;
+      color: #185a9d;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .box a:hover {
+      background: #185a9d;
+      color: #fff;
+    }
+
+    /* Secciones adicionales */
+    .container {
+      max-width: 900px;
+      margin: 0 auto 4rem auto;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 16px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    h1, h2 {
+      margin-bottom: 1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <div class="logo">
+      <a href="#">MiProyecto</a>
+    </div>
+    <ul>
+      <li><a href="#">Sección 1</a></li>
+      <li><a href="#">Sección 2</a></li>
+      <li><a href="#">Sección 3</a></li>
+    </ul>
+  </nav>
+
+  <!-- Caja central de bienvenida -->
+  <div class="box">
+    <h1>Hola {{ user.username }} 👋</h1>
+    <p>¡Bienvenido a la app!</p>
+    <a href="{% url 'logout' %}">Cerrar sesión</a>
+  </div>
+
+  <!-- Secciones de inicio -->
+  <div class="container">
+    <div class="section">
+      <h2>Sección de Inicio 1</h2>
+      <p>Aquí puedes agregar contenido introductorio o destacable.</p>
+    </div>
+
+    <div class="section">
+      <h2>Sección de Inicio 2</h2>
+      <p>Aquí puedes agregar información adicional o noticias recientes.</p>
+    </div>
+  </div>
+
+</body>
+</html>
