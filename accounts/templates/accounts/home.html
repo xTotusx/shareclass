@@ -1,20 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <title>Bienvenido</title>
   <style>
+    /* ===== Fondo animado ===== */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background: linear-gradient(135deg, #43cea2, #185a9d);
+      padding: 0;
+      background: linear-gradient(135deg, #43cea2, #185a9d, #0f3d5c, #185a9d);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
       color: #fff;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* Barra de navegación */
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* ===== Barra de navegación ===== */
     nav {
       width: 100%;
+      box-sizing: border-box;
       background-color: rgba(0,0,0,0.3);
       padding: 1rem 2rem;
       display: flex;
@@ -23,6 +36,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     nav ul {
@@ -44,57 +59,74 @@
       color: #ffcc00;
     }
 
-    /* Caja central de bienvenida */
-    .box {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 2rem;
-      border-radius: 16px;
-      text-align: center;
+    nav .logo img {
+      height: 40px;
+      display: block;
+    }
+
+    /* ===== Saludo con avatar ===== */
+    .welcome {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 4rem auto 2rem auto;
-      max-width: 600px;
+      font-size: 1.5rem;
+      gap: 1rem;
     }
 
-    .box a {
-      display: inline-block;
-      margin-top: 16px;
-      padding: 8px 14px;
-      background: #fff;
-      color: #185a9d;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: background 0.3s, color 0.3s;
+    .welcome img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
     }
 
-    .box a:hover {
-      background: #185a9d;
-      color: #fff;
-    }
-
-    /* Secciones adicionales */
+    /* ===== Secciones adicionales (glassmorphism) ===== */
     .container {
-      max-width: 900px;
+      max-width: 100%;
       margin: 0 auto 4rem auto;
       padding: 0 1rem;
+      box-sizing: border-box;
       text-align: center;
     }
 
     .section {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.1);
       padding: 2rem;
       margin-bottom: 2rem;
       border-radius: 16px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
       transition: transform 0.3s, box-shadow 0.3s;
+      backdrop-filter: blur(10px); 
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     .section:hover {
       transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
 
-    h1, h2 {
+    h2 {
       margin-bottom: 1rem;
     }
 
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .welcome {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -102,20 +134,22 @@
   <!-- Barra de navegación -->
   <nav>
     <div class="logo">
-      <a href="#">MiProyecto</a>
+      <a href="#"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
     </div>
     <ul>
       <li><a href="#">Sección 1</a></li>
       <li><a href="#">Sección 2</a></li>
-      <li><a href="#">Sección 3</a></li>
+      <li><a href="{% url 'perfil' %}">Perfil</a></li>
+      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
     </ul>
   </nav>
 
-  <!-- Caja central de bienvenida -->
-  <div class="box">
-    <h1>Hola {{ user.username }} 👋</h1>
-    <p>¡Bienvenido a la app!</p>
-    <a href="{% url 'logout' %}">Cerrar sesión</a>
+  <!-- Saludo con avatar -->
+  <div class="welcome">
+    {% if user.profile.profile_image %}
+      <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
+    {% endif %}
+    <span>Hola {{ user.username }} 👋</span>
   </div>
 
   <!-- Secciones de inicio -->
