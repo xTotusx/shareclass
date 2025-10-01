@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts',
+    'libros', 
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+#Guarda la img
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -128,4 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'auth'               # URL de login (auth.html)
 LOGIN_REDIRECT_URL = 'home'      # Redirige al home después del login
 LOGOUT_REDIRECT_URL = 'auth'     # Redirige a auth después del logout
+
 
