@@ -138,7 +138,7 @@
     </div>
     <ul>
       <li><a href="#">Inicio</a></li>
-      <li><a href="#libros">Libros</a></li>
+      <li><a href="{% url 'libros_home' %}">Libros</a></li>
       <li><a href="#dispositivos">Dispositivos</a></li>
       <li><a href="{% url 'perfil' %}">Perfil</a></li>
       <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
@@ -153,20 +153,48 @@
     <span>Hola {{ user.username }} 👋</span>
   </div>
 
-  <!-- Secciones de inicio -->
-  <div class="container">
-    <!-- Sección 2: Libros -->
-    <div class="section" id="libros">
+<!-- Secciones de inicio -->
+<div class="container">
+  <!-- Sección 2: Libros -->
+  <a href="{% url 'libros_home' %}" style="text-decoration: none; color: inherit;">
+    <div class="section glass-card">
       <h2>📚 Libros</h2>
       <p>Aquí podrás ver y gestionar tus libros.</p>
     </div>
+  </a>
+</div>
 
-    <!-- Sección 3: Dispositivos -->
-    <div class="section" id="dispositivos">
-      <h2>💻 Dispositivos</h2>
-      <p>Aquí se mostrarán tus dispositivos registrados.</p>
-    </div>
+<style>
+  /* Estilo glass para secciones */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1rem auto;
+    max-width: 500px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: block;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+</style>
+
+
+<!-- Sección 3: Dispositivos -->
+<a href="#dispositivos" style="text-decoration: none; color: inherit;">
+  <div class="section glass-card">
+    <h2>💻 Dispositivos</h2>
+    <p>Aquí se mostrarán tus dispositivos registrados.</p>
   </div>
+</a>
 
 </body>
 </html>

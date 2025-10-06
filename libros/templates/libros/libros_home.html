@@ -86,6 +86,20 @@
       color: #185a9d;
     }
 
+    .messages {
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .alert-success { background-color: #c8f7c5; color: #185a9d; }
+    .alert-error { background-color: #f7c5c5; color: #a30000; }
+    .alert-warning { background-color: #fff3cd; color: #5f4c00; }
+
     .libros-list {
       display: flex;
       flex-wrap: wrap;
@@ -135,6 +149,15 @@
 
   <div class="container">
 
+    <!-- MENSAJES -->
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <!-- FORMULARIO AGREGAR LIBRO -->
     <div class="section">
       <h2>Agregar Libro</h2>
@@ -166,21 +189,35 @@
     </div>
 
     <!-- LISTA DE LIBROS -->
-    <div class="libros-list">
-      {% for libro in libros %}
-      <div class="libro-card">
-        {% if libro.imagen %}
-        <img src="{{ libro.imagen.url }}" alt="{{ libro.titulo }}">
-        {% endif %}
-        <h3>{{ libro.titulo }}</h3>
-        <p>{{ libro.autor }}</p>
-      </div>
-      {% empty %}
-      <p>No se encontraron libros.</p>
-      {% endfor %}
-    </div>
-  </div>
+    <div class="section">
+      <h2>Libros Registrados</h2>
+      <div class="libros-list">
+        {% for libro in libros %}
+          <div class="libro-card">
+            {% if libro.id %}
+              <a href="{% url 'libro_detalle' libro.id %}" style="text-decoration:none; color:white;">
+                {% if libro.imagen %}
+                  <img src="{{ libro.imagen.url }}" alt="{{ libro.titulo }}">
+                {% endif %}
+                <h3>{{ libro.titulo }}</h3>
+                <p>{{ libro.autor }}</p>
+                
 
+              </a>
+            {% else %}
+              <div>
+                <h3>{{ libro.titulo }}</h3>
+                <p>{{ libro.autor }}</p>
+              </div>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p>No hay libros registrados aún.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
 </body>
 </html>
 

@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{{ libro.titulo }} - Detalle</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #43cea2, #185a9d, #0f3d5c, #185a9d);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      max-width: 800px;
+      width: 100%;
+    }
+    .card img {
+      max-width: 220px;
+      border-radius: 12px;
+    }
+    .info {
+      text-align: left;
+      flex: 1;
+    }
+    .info h1 {
+      margin: 0 0 0.5rem 0;
+    }
+    .info p {
+      margin: 0.25rem 0;
+    }
+    .stock {
+      font-weight: bold;
+      margin-top: 0.5rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+    .stock-ok {
+      background-color: rgba(67,206,162,0.2);
+      color: #aaffaa;
+    }
+    .stock-low {
+      background-color: rgba(255,255,255,0.2);
+      color: #ffd966;
+    }
+    .stock-out {
+      background-color: rgba(255,255,255,0.2);
+      color: #ff6666;
+    }
+    .buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .buttons a {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #fff;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.3s, color 0.3s;
+    }
+    .buttons a:hover {
+      background: rgba(255,255,255,0.5);
+      color: #185a9d;
+    }
+    @media (max-width: 768px) {
+      .card { flex-direction: column; align-items: center; text-align: center; }
+      .info { text-align: center; }
+      .buttons { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    {% if libro.imagen %}
+      <img src="{{ libro.imagen.url }}" alt="{{ libro.titulo }}">
+    {% endif %}
+
+    <div class="info">
+      <h1>{{ libro.titulo }}</h1>
+      <h3>{{ libro.autor }}</h3>
+
+      <p><strong>Descripción:</strong> {{ libro.descripcion|default:"Sin descripción disponible." }}</p>
+
+      {% if libro.stock > 5 %}
+        <p class="stock stock-ok">Stock disponible: {{ libro.stock }}</p>
+      {% elif libro.stock > 0 %}
+        <p class="stock stock-low">Quedan pocas unidades ({{ libro.stock }})</p>
+      {% else %}
+        <p class="stock stock-out">⚠️ Sin stock disponible</p>
+      {% endif %}
+
+      <div class="buttons">
+        <a href="{% url 'libro_editar' libro.id %}">Editar</a>
+        <a href="{% url 'libros_home' %}">⬅ Volver</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+</html>
