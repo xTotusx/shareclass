@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenido a Shareclass</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3rem;
+    }
+    p {
+      font-size: 1.2rem;
+      max-width: 600px;
+    }
+    a {
+      color: white;
+      background: rgba(255,255,255,0.2);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 1.5rem;
+      transition: 0.3s;
+    }
+    a:hover {
+      background: rgba(255,255,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido a Shareclass 📘</h1>
+  <p>Una plataforma diseñada para gestionar tus libros y dispositivos de forma fácil y moderna.</p>
+  <a href="{% url 'auth' %}">Iniciar sesión o registrarse</a>
+</body>
+</html>

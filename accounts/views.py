@@ -50,6 +50,15 @@ def auth_view(request):
                 return redirect('home')
     return render(request, 'accounts/auth.html', {'error': error})
 
+# Página pública (antes del login)
+def landing(request):
+    # Si el usuario ya está logueado, mándalo directo al home
+    if request.user.is_authenticated:
+        return redirect('home')
+    return render(request, 'accounts/landing.html')
+
+
+
 # Logout
 @login_required
 def logout_view(request):

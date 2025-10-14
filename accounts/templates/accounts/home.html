@@ -3,49 +3,68 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Bienvenido</title>
+  <title>Inicio</title>
   <style>
-    /* ===== Fondo animado ===== */
-    body {
-      font-family: Arial, sans-serif;
+    /* ===== ESTILO GLOBAL ===== */
+    * {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #43cea2, #185a9d, #0f3d5c, #185a9d);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      color: #fff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    @keyframes gradientBG {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
-
-    /* ===== Barra de navegación ===== */
-    nav {
-      width: 100%;
       box-sizing: border-box;
-      background-color: rgba(0,0,0,0.3);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      /* Fondo estático simple */
+      background: #185a9d;
+    }
+
+    /* ===== SCROLL SNAPPING ===== */
+    body {
+      scroll-snap-type: y mandatory;
+    }
+    section {
+      scroll-snap-align: start;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(5px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background-color: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+    }
+
+    nav .logo img {
+      height: 40px;
     }
 
     nav ul {
       list-style: none;
       display: flex;
       gap: 1.5rem;
-      margin: 0;
-      padding: 0;
     }
 
     nav a {
@@ -59,142 +78,147 @@
       color: #ffcc00;
     }
 
-    nav .logo img {
-      height: 40px;
-      display: block;
-    }
-
-    /* ===== Saludo con avatar ===== */
+    /* ===== PANTALLA 1 - SALUDO ===== */
     .welcome {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 4rem auto 2rem auto;
-      font-size: 1.5rem;
-      gap: 1rem;
+      justify-content: space-between;
+      width: 80%;
+      max-width: 1200px;
+    }
+
+    .welcome-text {
+      text-align: left;
+    }
+
+    .welcome-text h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-text p {
+      font-size: 1.2rem;
+      color: #e0e0e0;
     }
 
     .welcome img {
-      width: 60px;
-      height: 60px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #fff;
+      border: 4px solid rgba(255,255,255,0.8);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
-    /* ===== Secciones adicionales (glassmorphism) ===== */
-    .container {
-      max-width: 100%;
-      margin: 0 auto 4rem auto;
-      padding: 0 1rem;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    .section {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border-radius: 16px;
-      max-width: 90%;
-      margin-left: auto;
-      margin-right: auto;
-      box-sizing: border-box;
-      transition: transform 0.3s, box-shadow 0.3s;
-      backdrop-filter: blur(10px); 
+    /* ===== SECCIONES GLASS ===== */
+    .glass-section {
+      background: rgba(255,255,255,0.08);
+      padding: 3rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
       border: 1px solid rgba(255,255,255,0.2);
+      max-width: 600px;
+      width: 90%;
+      margin: auto;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .section:hover {
+    .glass-section:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
 
-    h2 {
+    .glass-section h2 {
       margin-bottom: 1rem;
+      font-size: 2rem;
     }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-      nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .welcome {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
+    .glass-section p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      color: #dfe6e9;
     }
+
+    .glass-section a {
+      display: inline-block;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .glass-section a:hover {
+      background: rgba(255,255,255,0.6);
+      color: #185a9d;
+    }
+
   </style>
 </head>
 <body>
 
-  <!-- Barra de navegación -->
+  <!-- NAVBAR -->
   <nav>
     <div class="logo">
       <a href="#"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
     </div>
     <ul>
-      <li><a href="#">Inicio</a></li>
-      <li><a href="{% url 'libros_home' %}">Libros</a></li>
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#libros">Libros</a></li>
       <li><a href="#dispositivos">Dispositivos</a></li>
       <li><a href="{% url 'perfil' %}">Perfil</a></li>
       <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
     </ul>
   </nav>
 
-  <!-- Saludo con avatar -->
-  <div class="welcome">
-    {% if user.profile.profile_image %}
-      <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
-    {% endif %}
-    <span>Hola {{ user.username }} 👋</span>
-  </div>
-
-<!-- Secciones de inicio -->
-<div class="container">
-  <!-- Sección 2: Libros -->
-  <a href="{% url 'libros_home' %}" style="text-decoration: none; color: inherit;">
-    <div class="section glass-card">
-      <h2>📚 Libros</h2>
-      <p>Aquí podrás ver y gestionar tus libros.</p>
+  <!-- SECCIÓN 1: BIENVENIDA -->
+  <section id="inicio" class="visible">
+    <div class="welcome">
+      <div class="welcome-text">
+        <h1>Bienvenido, {{ user.username }} 👋</h1>
+        <p>Explora tus libros y dispositivos desde aquí.</p>
+      </div>
+      {% if user.profile.profile_image %}
+        <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
+      {% endif %}
     </div>
-  </a>
-</div>
+  </section>
 
-<style>
-  /* Estilo glass para secciones */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 2rem;
-    margin: 1rem auto;
-    max-width: 500px;
-    text-align: center;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    display: block;
-  }
+  <!-- SECCIÓN 2: LIBROS -->
+  <section id="libros">
+    <div class="glass-section">
+      <h2>📚 Libros</h2>
+      <p>Gestiona tus libros, agrégalos o edita su información fácilmente.</p>
+      <a href="{% url 'libros_home' %}">Ir a Libros</a>
+    </div>
+  </section>
 
-  .glass-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-  }
-</style>
+  <!-- SECCIÓN 3: DISPOSITIVOS -->
+  <section id="dispositivos">
+    <div class="glass-section">
+      <h2>💻 Dispositivos</h2>
+      <p>Visualiza y gestiona los dispositivos conectados a tu cuenta.</p>
+      <a href="#dispositivos">Ver dispositivos</a>
+    </div>
+  </section>
 
+  <!-- ===== EFECTO DE SCROLL ===== -->
+  <script>
+    const sections = document.querySelectorAll("section");
 
-<!-- Sección 3: Dispositivos -->
-<a href="#dispositivos" style="text-decoration: none; color: inherit;">
-  <div class="section glass-card">
-    <h2>💻 Dispositivos</h2>
-    <p>Aquí se mostrarán tus dispositivos registrados.</p>
-  </div>
-</a>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => observer.observe(section));
+  </script>
 
 </body>
 </html>

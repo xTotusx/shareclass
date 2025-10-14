@@ -96,6 +96,22 @@
       font-size: 14px;
     }
 
+    .back-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .back-link a {
+      color: #222;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .back-link a:hover {
+      color: #007bff;
+    }
+
     .error { color: red; font-size: 14px; }
   </style>
 </head>
@@ -116,6 +132,11 @@
         <button type="submit" name="login">Ingresar</button>
       </form>
       <p>¿No tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Regístrate</span></p>
+
+      <!-- Botón de regreso al landing -->
+      <div class="back-link">
+        <a href="{% url 'landing' %}">← Volver al inicio</a>
+      </div>
     </div>
 
     <!-- REGISTER -->
@@ -130,6 +151,11 @@
         <button type="submit" name="register">Crear cuenta</button>
       </form>
       <p>¿Ya tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Inicia sesión</span></p>
+
+      <!-- Botón de regreso al landing -->
+      <div class="back-link">
+        <a href="{% url 'landing' %}">← Volver al inicio</a>
+      </div>
     </div>
   </div>
 
