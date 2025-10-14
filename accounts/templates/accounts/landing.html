@@ -3,45 +3,204 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Bienvenido a Shareclass</title>
+  <title>ShareClass - Bienvenido</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
+    /* ===== ESTILOS GENERALES ===== */
+    * {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #43cea2, #185a9d);
-      color: white;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(-45deg, #1a1a1a, #222, #333, #1a1a1a);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    section {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      padding: 60px 20px;
       text-align: center;
     }
-    h1 {
-      font-size: 3rem;
+
+    h1, h2, h3 {
+      margin-bottom: 20px;
     }
+
     p {
-      font-size: 1.2rem;
-      max-width: 600px;
+      max-width: 800px;
+      line-height: 1.6;
+      font-size: 1.1em;
+      color: #ddd;
     }
-    a {
-      color: white;
-      background: rgba(255,255,255,0.2);
-      padding: 10px 20px;
-      border-radius: 8px;
+
+    /* ===== SECCIÓN 1: BIENVENIDA ===== */
+    .hero {
+      position: relative;
+    }
+
+    .hero img {
+      width: 200px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+      transition: transform 0.5s ease;
+    }
+
+    .hero img:hover {
+      transform: scale(1.05);
+    }
+
+    .hero h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .hero a {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      background: #fff;
+      color: #111;
+      font-weight: bold;
       text-decoration: none;
-      margin-top: 1.5rem;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
-    a:hover {
-      background: rgba(255,255,255,0.4);
+
+    .hero a:hover {
+      background: #007bff;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* ===== SECCIÓN 2: DESCRIPCIÓN ===== */
+    .about {
+      background: rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* ===== SECCIÓN 3: CONTACTO ===== */
+    .contact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .founders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+
+    .founder {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .founder:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .founder img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 2px solid #fff;
+    }
+
+    .founder h3 {
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.3);
     }
   </style>
 </head>
 <body>
-  <h1>Bienvenido a Shareclass 📘</h1>
-  <p>Una plataforma diseñada para gestionar tus libros y dispositivos de forma fácil y moderna.</p>
-  <a href="{% url 'auth' %}">Iniciar sesión o registrarse</a>
+  <!-- SECCIÓN 1: BIENVENIDA -->
+  <section class="hero" id="inicio">
+    <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo ShareClass">
+    <h1>Hola, somos <strong>ShareClass</strong></h1>
+    <p>Una plataforma creada para compartir, aprender y conectar con otros estudiantes y docentes en un entorno colaborativo.</p>
+    <a href="{% url 'auth' %}">Ingresar</a>
+  </section>
+
+  <!-- SECCIÓN 2: DESCRIPCIÓN -->
+  <section class="about" id="sobre">
+    <h2>¿Qué es ShareClass?</h2>
+    <p>
+      ShareClass es un espacio digital diseñado para fortalecer el aprendizaje colaborativo.
+      Aquí puedes compartir recursos educativos, apuntes, proyectos y experiencias con otros usuarios.  
+      Nuestra misión es crear una comunidad de aprendizaje accesible, moderna y solidaria, donde el conocimiento se multiplica.
+    </p>
+  </section>
+
+  <!-- SECCIÓN 3: CONTACTO Y FUNDADORES -->
+  <section class="contact" id="contacto">
+    <h2>Contáctanos</h2>
+    <p>Conoce a los fundadores de ShareClass. Puedes escribirnos si deseas colaborar o formar parte del proyecto.</p>
+
+    <div class="founders">
+      <div class="founder">
+        <img src="{% static 'accounts/founder1.jpg' %}" alt="Fundador 1">
+        <h3>Fundador 1</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder2.jpg' %}" alt="Fundador 2">
+        <h3>Fundador 2</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder3.jpg' %}" alt="Fundador 3">
+        <h3>Fundador 3</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder4.jpg' %}" alt="Fundador 4">
+        <h3>Fundador 4</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 ShareClass — Creando comunidad a través del conocimiento.
+  </footer>
 </body>
 </html>
