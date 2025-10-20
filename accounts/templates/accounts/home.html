@@ -1,224 +1,231 @@
+{% extends 'accounts/base.html' %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Inicio</title>
-  <style>
-    /* ===== ESTILO GLOBAL ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
-    html, body {
-      height: 100%;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      color: #fff;
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-      /* Fondo estático simple */
-      background: #185a9d;
-    }
+{% block content %}
+<style>
+  /* ===== ESTILO LOCAL (solo para home) ===== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    /* ===== SCROLL SNAPPING ===== */
-    body {
-      scroll-snap-type: y mandatory;
-    }
-    section {
-      scroll-snap-align: start;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      transition: all 0.5s ease;
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 1s ease, transform 1s ease;
-    }
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #fff;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    background: #185a9d;
+  }
 
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-    }
+  body {
+    scroll-snap-type: y mandatory;
+  }
 
-    nav .logo img {
-      height: 40px;
-    }
+  section {
+    scroll-snap-align: start;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    transition: all 0.5s ease;
+    opacity: 0;
+    transform: translateY(50px);
+  }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1.5rem;
-    }
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 1s ease, transform 1s ease;
+  }
 
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s;
-    }
+  /* ===== NAVBAR LOCAL (opcional si no usas el del base.html) ===== */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+  }
 
-    nav a:hover {
-      color: #ffcc00;
-    }
+  nav .logo img {
+    height: 40px;
+  }
 
-    /* ===== PANTALLA 1 - SALUDO ===== */
-    .welcome {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 80%;
-      max-width: 1200px;
-    }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+  }
 
-    .welcome-text {
-      text-align: left;
-    }
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
 
-    .welcome-text h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
+  nav a:hover {
+    color: #ffcc00;
+  }
 
-    .welcome-text p {
-      font-size: 1.2rem;
-      color: #e0e0e0;
-    }
+  /* ===== PANTALLA 1 - SALUDO ===== */
+  .welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 1200px;
+  }
 
-    .welcome img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid rgba(255,255,255,0.8);
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    }
+  .welcome-text {
+    text-align: left;
+  }
 
-    /* ===== SECCIONES GLASS ===== */
-    .glass-section {
-      background: rgba(255,255,255,0.08);
-      padding: 3rem;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.2);
-      max-width: 600px;
-      width: 90%;
-      margin: auto;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+  .welcome-text h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
 
-    .glass-section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-    }
+  .welcome-text p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+  }
 
-    .glass-section h2 {
-      margin-bottom: 1rem;
-      font-size: 2rem;
-    }
+  .welcome img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  }
 
-    .glass-section p {
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-      color: #dfe6e9;
-    }
+  /* ===== SECCIONES GLASS ===== */
+  .glass-section {
+    background: rgba(255,255,255,0.08);
+    padding: 3rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    max-width: 600px;
+    width: 90%;
+    margin: auto;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
 
-    .glass-section a {
-      display: inline-block;
-      padding: 10px 20px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 8px;
-      color: #fff;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background 0.3s, color 0.3s;
-    }
+  .glass-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
 
-    .glass-section a:hover {
-      background: rgba(255,255,255,0.6);
-      color: #185a9d;
-    }
+  .glass-section h2 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+  }
 
-  </style>
-</head>
-<body>
+  .glass-section p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #dfe6e9;
+  }
 
-  <!-- NAVBAR -->
-  <nav>
-    <div class="logo">
-      <a href="#"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
+  .glass-section a {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .glass-section a:hover {
+    background: rgba(255,255,255,0.6);
+    color: #185a9d;
+  }
+</style>
+
+<!-- SECCIÓN 1: BIENVENIDA -->
+<section id="inicio" class="visible">
+  <div class="welcome">
+    <div class="welcome-text">
+      <h1>Bienvenido, {{ user.username }} 👋</h1>
+      <p>Explora tus libros y dispositivos desde aquí.</p>
     </div>
-    <ul>
-      <li><a href="#inicio">Inicio</a></li>
-      <li><a href="#libros">Libros</a></li>
-      <li><a href="#dispositivos">Dispositivos</a></li>
-      <li><a href="{% url 'perfil' %}">Perfil</a></li>
-      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
-    </ul>
-  </nav>
+    {% if user.profile.profile_image %}
+      <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
+    {% endif %}
+  </div>
+</section>
 
-  <!-- SECCIÓN 1: BIENVENIDA -->
-  <section id="inicio" class="visible">
-    <div class="welcome">
-      <div class="welcome-text">
-        <h1>Bienvenido, {{ user.username }} 👋</h1>
-        <p>Explora tus libros y dispositivos desde aquí.</p>
-      </div>
-      {% if user.profile.profile_image %}
-        <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
-      {% endif %}
-    </div>
-  </section>
+<!-- SECCIÓN 2: LIBROS -->
+<section id="libros">
+  <div class="glass-section">
+    <h2>📚 Libros</h2>
+    <p>Gestiona tus libros, agrégalos o edita su información fácilmente.</p>
+    <a href="{% url 'libros_home' %}">Ir a Libros</a>
+  </div>
+</section>
 
-  <!-- SECCIÓN 2: LIBROS -->
-  <section id="libros">
-    <div class="glass-section">
-      <h2>📚 Libros</h2>
-      <p>Gestiona tus libros, agrégalos o edita su información fácilmente.</p>
-      <a href="{% url 'libros_home' %}">Ir a Libros</a>
-    </div>
-  </section>
+<!-- SECCIÓN 3: DISPOSITIVOS -->
+<section id="dispositivos">
+  <div class="glass-section">
+    <h2>💻 Dispositivos</h2>
+    <p>Visualiza y gestiona los dispositivos conectados a tu cuenta.</p>
+    <a href="#dispositivos">Ver dispositivos</a>
+  </div>
+</section>
 
-  <!-- SECCIÓN 3: DISPOSITIVOS -->
-  <section id="dispositivos">
-    <div class="glass-section">
-      <h2>💻 Dispositivos</h2>
-      <p>Visualiza y gestiona los dispositivos conectados a tu cuenta.</p>
-      <a href="#dispositivos">Ver dispositivos</a>
-    </div>
-  </section>
+<!-- ===== EFECTO DE SCROLL ===== -->
+<script>
+  const sections = document.querySelectorAll("section");
 
-  <!-- ===== EFECTO DE SCROLL ===== -->
-  <script>
-    const sections = document.querySelectorAll("section");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  }, { threshold: 0.3 });
 
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    }, { threshold: 0.3 });
+  sections.forEach(section => observer.observe(section));
+</script>
 
-    sections.forEach(section => observer.observe(section));
-  </script>
+<script>
+  // Banner dinámico (offline)
+  const offlineBanner = document.createElement('div');
+  offlineBanner.textContent = '⚠️ Estás sin conexión';
+  offlineBanner.style.position = 'fixed';
+  offlineBanner.style.bottom = '0';
+  offlineBanner.style.left = '0';
+  offlineBanner.style.width = '100%';
+  offlineBanner.style.backgroundColor = '#ff4b4b';
+  offlineBanner.style.color = 'white';
+  offlineBanner.style.textAlign = 'center';
+  offlineBanner.style.padding = '10px';
+  offlineBanner.style.fontWeight = 'bold';
+  offlineBanner.style.display = 'none';
+  offlineBanner.style.zIndex = '9999';
+  document.body.appendChild(offlineBanner);
 
-</body>
-</html>
+  function updateOnlineStatus() {
+    offlineBanner.style.display = navigator.onLine ? 'none' : 'block';
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+</script>
+{% endblock %}

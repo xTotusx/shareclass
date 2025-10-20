@@ -1,168 +1,68 @@
+{% extends 'accounts/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Login / Registro</title>
-  <style>
-    /* Fondo animado oscuro */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(-45deg, #1a1a1a, #222, #333, #1a1a1a);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-    }
 
-    @keyframes gradientBG {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
+{% block content %}
+<div class="container" id="authContainer">
+  <div class="logo-section">
+    <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo">
+  </div>
 
-    /* Contenedor */
-    .container {
-      display: flex;
-      width: 800px;
-      height: 400px;
-      background: #fff;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      position: relative;
-    }
+  <!-- LOGIN -->
+  <div class="form-section login">
+    <h2>Iniciar Sesión</h2>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    {% if success %}<p class="success">{{ success }}</p>{% endif %}
+    <form method="POST" action="{% url 'auth' %}">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Usuario" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit" name="login">Ingresar</button>
+    </form>
+    <p>¿No tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Regístrate</span></p>
 
-    .logo-section {
-      width: 40%;
-      background: #222;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: transform 1s ease;
-    }
-
-    .logo-section img {
-      max-width: 80%;
-    }
-
-    .form-section {
-      width: 60%;
-      position: absolute;
-      height: 100%;
-      top: 0;
-      transition: transform 0.8s ease;
-      padding: 40px;
-      box-sizing: border-box;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #222;
-      color: #fff;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .form-section.login { left: 40%; }
-    .form-section.register { left: -60%; }
-
-    .container.active .form-section.login { transform: translateX(100%); }
-    .container.active .form-section.register { transform: translateX(100%); }
-    .container.active .logo-section { transform: translateX(150%); }
-
-    .toggle-link {
-      color: blue;
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 14px;
-    }
-
-    .back-link {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .back-link a {
-      color: #222;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s;
-    }
-
-    .back-link a:hover {
-      color: #007bff;
-    }
-
-    .error { color: red; font-size: 14px; }
-  </style>
-</head>
-<body>
-  <div class="container" id="authContainer">
-    <div class="logo-section">
-      <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo">
-    </div>
-
-    <!-- LOGIN -->
-    <div class="form-section login">
-      <h2>Iniciar Sesión</h2>
-      {% if error %}<p class="error">{{ error }}</p>{% endif %}
-      <form method="POST" action="{% url 'auth' %}">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Usuario" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit" name="login">Ingresar</button>
-      </form>
-      <p>¿No tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Regístrate</span></p>
-
-      <!-- Botón de regreso al landing -->
-      <div class="back-link">
-        <a href="{% url 'landing' %}">← Volver al inicio</a>
-      </div>
-    </div>
-
-    <!-- REGISTER -->
-    <div class="form-section register">
-      <h2>Registrarse</h2>
-      {% if error %}<p class="error">{{ error }}</p>{% endif %}
-      <form method="POST" action="{% url 'auth' %}">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Usuario" required>
-        <input type="email" name="email" placeholder="Correo electrónico" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit" name="register">Crear cuenta</button>
-      </form>
-      <p>¿Ya tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Inicia sesión</span></p>
-
-      <!-- Botón de regreso al landing -->
-      <div class="back-link">
-        <a href="{% url 'landing' %}">← Volver al inicio</a>
-      </div>
+    <div class="back-link">
+      <a href="{% url 'landing' %}">← Volver al inicio</a>
     </div>
   </div>
 
-  <script>
-    function toggleForms() {
-      document.getElementById("authContainer").classList.toggle("active");
-    }
-  </script>
-</body>
-</html>
+  <!-- REGISTER -->
+  <div class="form-section register">
+    <h2>Registrarse</h2>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    {% if success %}<p class="success">{{ success }}</p>{% endif %}
+    <form method="POST" action="{% url 'auth' %}">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Usuario" required>
+      <input type="email" name="email" placeholder="Correo electrónico" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit" name="register">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Inicia sesión</span></p>
+
+    <div class="back-link">
+      <a href="{% url 'landing' %}">← Volver al inicio</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleForms() {
+    document.getElementById("authContainer").classList.toggle("active");
+  }
+
+  // ==== TOAST (MENSAJE FLOTANTE) ====
+  const errorMsg = "{{ error|default:'' }}";
+  const successMsg = "{{ success|default:'' }}";
+
+  if (errorMsg) showToast(errorMsg, "error");
+  if (successMsg) showToast(successMsg, "success");
+
+  function showToast(message, type) {
+    const toast = document.createElement("div");
+    toast.classList.add("toast", type);
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+</script>
+{% endblock %}

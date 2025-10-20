@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}ShareClass{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN COMÚN -->
+  <nav>
+    <div class="logo">
+      <a href="{% url 'home' %}"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
+    </div>
+    <ul>
+      <li><a href="{% url 'home' %}">Inicio</a></li>
+      <li><a href="{% url 'perfil' %}">Perfil</a></li>
+      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+    </ul>
+  </nav>
+
+  <!-- CONTENIDO DE CADA PÁGINA -->
+  {% block content %}{% endblock %}
+
+  <!-- SCRIPTS -->
+  <script>
+    // Scroll secciones visibles
+    const sections = document.querySelectorAll("section");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(section => observer.observe(section));
+
+    // Banner offline
+    const offlineBanner = document.createElement('div');
+    offlineBanner.textContent = '⚠️ Estás sin conexión';
+    offlineBanner.style.position = 'fixed';
+    offlineBanner.style.bottom = '0';
+    offlineBanner.style.left = '0';
+    offlineBanner.style.width = '100%';
+    offlineBanner.style.backgroundColor = '#ff4b4b';
+    offlineBanner.style.color = 'white';
+    offlineBanner.style.textAlign = 'center';
+    offlineBanner.style.padding = '10px';
+    offlineBanner.style.fontWeight = 'bold';
+    offlineBanner.style.display = 'none';
+    offlineBanner.style.zIndex = '9999';
+    document.body.appendChild(offlineBanner);
+
+    function updateOnlineStatus() {
+      offlineBanner.style.display = navigator.onLine ? 'none' : 'block';
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+  </script>
+
+</body>
+</html>

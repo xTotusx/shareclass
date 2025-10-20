@@ -1,0 +1,58 @@
+{% extends 'accounts/base.html' %}
+
+
+{% block content %}
+<div class="error-page-container">
+  <div class="error-page">
+    <h2>😕 ¡Ups! Algo salió mal</h2>
+    <p>{{ message }}</p>
+    <a href="{% url 'landing' %}" class="btn">Volver al inicio</a>
+  </div>
+</div>
+
+<style>
+/* Contenedor centrado y full screen */
+.error-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  box-sizing: border-box;
+}
+
+/* Caja de error */
+.error-page {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Título */
+.error-page h2 {
+  color: #d9534f;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+/* Botón */
+.btn {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 1.5rem;
+  transition: background 0.3s ease;
+}
+.btn:hover {
+  background: #0056b3;
+}
+</style>
+{% endblock %}
