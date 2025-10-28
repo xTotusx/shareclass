@@ -1,44 +1,36 @@
-const CACHE_NAME = 'shareclass-v1';
+const CACHE_NAME = 'shareclass-cache-v1';
 const urlsToCache = [
-  '/',  // landing
-  '/auth/', // login / registro
-  '/static/accounts/styles.css',
-  '/static/accounts/logo.png',
+  '/',
+  '/static/accounts/landing.css',
+  '/static/accounts/shareclass_logo.jpeg',
+  // Añade otros recursos estáticos que quieras cachear
 ];
 
-// ===== INSTALACIÓN =====
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('[SW] Cacheando app shell');
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// ===== FETCH =====
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      // Si está en caché → devolverlo (Happy Path)
-      if (response) return response;
-
-      // Si no → obtener de red (Unhappy Path)
-      return fetch(event.request).catch(() => caches.match('/'));
-    })
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
   );
 });
 
-// ===== ACTIVACIÓN =====
 self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
-      );
-    })
+    caches.keys().then(keyList => 
+      Promise.all(
+        keyList.map(key => {
+          if (!cacheWhitelist.includes(key)) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
   );
-  console.log('[SW] Activado y cache actualizado');
 });
-

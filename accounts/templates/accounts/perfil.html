@@ -1,74 +1,96 @@
-{% extends 'accounts/base.html' %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Perfil</title>
+<link rel="stylesheet" href="{% static 'accounts/perfil.css' %}">
+<link rel="manifest" href="{% static 'accounts/manifest.json' %}">
+<meta name="theme-color" content="#185a9d">
+</head>
+<body>
 
-{% block content %}
-<div class="profile-box">
-  <h1>Perfil de {{ user.username }}</h1>
-  <div class="profile-info">
-    <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
-    <p><strong>Correo:</strong> {{ user.email }}</p>
-  </div>
-
-  <!-- Avatar actual -->
-  <div class="selected-avatar" id="selectedAvatar">
-    {% if profile_image %}
-      <img id="selectedAvatarImg" src="{% static 'accounts/' %}{{ profile_image }}" alt="Avatar seleccionado">
-    {% else %}
-      <img id="selectedAvatarImg" src="{% static 'accounts/avatar_pp1.jpeg' %}" alt="Avatar por defecto">
-    {% endif %}
-  </div>
-
-  <!-- Formulario de selección -->
-  <form method="post" action="{% url 'perfil' %}">
-    {% csrf_token %}
-    <div class="profile-avatars">
-      <h3>Elige tu avatar</h3>
-      <div class="avatars">
-        {% for i in "123456789" %}
-          <label>
-            <input type="radio" name="profile_image" value="avatar_pp{{ i }}.jpeg" {% if profile_image == "avatar_pp"|add:i|add:".jpeg" %}checked{% endif %}>
-            <img src="{% static 'accounts/avatar_pp' %}{{ i }}.jpeg" class="avatar" alt="avatar {{ i }}">
-          </label>
-        {% endfor %}
-      </div>
-
-      <button type="submit" class="save-btn">Guardar</button>
+  <!-- Barra de navegación -->
+  <nav>
+    <div class="logo">
+      <a href="{% url 'home' %}"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
     </div>
-  </form>
+    <ul>
+      <li><a href="{% url 'home' %}">Inicio</a></li>
+      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+    </ul>
+  </nav>
 
-  <div class="profile-options" style="margin-top:1.5rem;">
-    <a href="#">Cambiar contraseña</a>
-    <a href="{% url 'logout' %}">Cerrar sesión</a>
+  <!-- Caja de perfil -->
+  <div class="profile-box">
+    <h1>Perfil de {{ user.username }}</h1>
+    <div class="profile-info">
+      <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
+      <p><strong>Correo:</strong> {{ user.email }}</p>
+    </div>
+
+    <!-- Avatar actual (vista previa) -->
+    <div class="selected-avatar" id="selectedAvatar">
+      {% if profile_image %}
+        <img id="selectedAvatarImg" src="{% static 'accounts/' %}{{ profile_image }}" alt="Avatar seleccionado">
+      {% else %}
+        <img id="selectedAvatarImg" src="{% static 'accounts/avatar_pp1.jpeg' %}" alt="Avatar por defecto">
+      {% endif %}
+    </div>
+
+    <!-- Formulario: selección + guardar -->
+    <form method="post" action="{% url 'perfil' %}">
+      {% csrf_token %}
+      <div class="profile-avatars">
+        <h3>Elige tu avatar</h3>
+        <div class="avatars">
+          {% for i in "123456789" %}
+            <label>
+              <input type="radio" name="profile_image" value="avatar_pp{{ i }}.jpeg" {% if profile_image == "avatar_pp"|add:i|add:".jpeg" %}checked{% endif %}>
+              <img src="{% static 'accounts/avatar_pp' %}{{ i }}.jpeg" class="avatar" alt="avatar {{ i }}">
+            </label>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="save-btn">Guardar</button>
+      </div>
+    </form>
+
+    <div class="profile-options" style="margin-top:1.5rem;">
+      <a href="#">Cambiar contraseña</a>
+      <a href="{% url 'logout' %}">Cerrar sesión</a>
+    </div>
   </div>
-</div>
 
-<script>
-  // Selección de avatar
-  document.querySelectorAll('.avatars label img').forEach(img => {
-    img.addEventListener('click', () => {
-      const input = img.parentElement.querySelector('input[type="radio"]');
-      if (input) input.checked = true;
+  <script>
+    // UI: al hacer click en la imagen marca el radio y actualiza la vista previa
+    document.querySelectorAll('.avatars label img').forEach(img => {
+      img.addEventListener('click', () => {
+        const input = img.parentElement.querySelector('input[type="radio"]');
+        if (input) input.checked = true;
 
-      document.querySelectorAll('.avatar').forEach(a => a.classList.remove('selected'));
-      img.classList.add('selected');
-
-      const preview = document.getElementById('selectedAvatarImg');
-      if (preview) preview.src = img.src;
-    });
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const checked = document.querySelector('.avatars input[type="radio"]:checked');
-    if (checked) {
-      const img = checked.parentElement.querySelector('img');
-      if (img) {
+        document.querySelectorAll('.avatar').forEach(a => a.classList.remove('selected'));
         img.classList.add('selected');
+
+        // Actualiza la imagen previa
         const preview = document.getElementById('selectedAvatarImg');
         if (preview) preview.src = img.src;
-      }
-    }
-  });
-</script>
-{% endblock %}
+      });
+    });
 
+    // on load: marcar visualmente la img que corresponde al radio checked
+    window.addEventListener('DOMContentLoaded', () => {
+      const checked = document.querySelector('.avatars input[type="radio"]:checked');
+      if (checked) {
+        const img = checked.parentElement.querySelector('img');
+        if (img) {
+          img.classList.add('selected');
+          const preview = document.getElementById('selectedAvatarImg');
+          if (preview) preview.src = img.src;
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

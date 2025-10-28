@@ -3,61 +3,40 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="{% static 'accounts/manifest.json' %}">
+  <meta name="theme-color" content="#185a9d">
+
   <title>{% block title %}ShareClass{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'accounts/styles.css' %}">
+
+  {% block styles %}
+
+  {% endblock %}
 </head>
 <body>
-
-  <!-- BARRA DE NAVEGACIÓN COMÚN -->
-  <nav>
+  {% if user.is_authenticated %}
+  <nav style="position:sticky;top:0;width:100%;padding:1rem 2rem;background:rgba(0,0,0,0.3);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(5px);border-bottom:1px solid rgba(255,255,255,0.1);">
     <div class="logo">
-      <a href="{% url 'home' %}"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
+      <a href="{% url 'home' %}"><img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo" style="height:40px;"></a>
     </div>
-    <ul>
-      <li><a href="{% url 'home' %}">Inicio</a></li>
-      <li><a href="{% url 'perfil' %}">Perfil</a></li>
-      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+    <ul style="list-style:none;display:flex;gap:1.5rem;margin:0;padding:0;">
+      <li><a href="{% url 'home' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Inicio</a></li>
+      <li><a href="{% url 'perfil' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Perfil</a></li>
+      <li><a href="{% url 'logout' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Cerrar sesión</a></li>
     </ul>
   </nav>
+  {% endif %}
 
-  <!-- CONTENIDO DE CADA PÁGINA -->
   {% block content %}{% endblock %}
 
-  <!-- SCRIPTS -->
   <script>
-    // Scroll secciones visibles
-    const sections = document.querySelectorAll("section");
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add("visible");
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register("{% static 'accounts/service-worker.js' %}")
+          .then(registration => console.log('Service Worker registrado:', registration.scope))
+          .catch(error => console.log('Error SW:', error));
       });
-    }, { threshold: 0.3 });
-    sections.forEach(section => observer.observe(section));
-
-    // Banner offline
-    const offlineBanner = document.createElement('div');
-    offlineBanner.textContent = '⚠️ Estás sin conexión';
-    offlineBanner.style.position = 'fixed';
-    offlineBanner.style.bottom = '0';
-    offlineBanner.style.left = '0';
-    offlineBanner.style.width = '100%';
-    offlineBanner.style.backgroundColor = '#ff4b4b';
-    offlineBanner.style.color = 'white';
-    offlineBanner.style.textAlign = 'center';
-    offlineBanner.style.padding = '10px';
-    offlineBanner.style.fontWeight = 'bold';
-    offlineBanner.style.display = 'none';
-    offlineBanner.style.zIndex = '9999';
-    document.body.appendChild(offlineBanner);
-
-    function updateOnlineStatus() {
-      offlineBanner.style.display = navigator.onLine ? 'none' : 'block';
     }
-
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-    updateOnlineStatus();
   </script>
-
 </body>
 </html>

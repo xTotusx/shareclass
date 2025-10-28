@@ -1,0 +1,146 @@
+/* ======== FONDO ANIMADO ======== */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(-45deg, #1a1a1a, #222, #333, #1a1a1a);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* ======== CONTENEDOR ======== */
+    .container {
+      display: flex;
+      width: 800px;
+      height: 400px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .logo-section {
+      width: 40%;
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 1s ease;
+    }
+
+    .logo-section img {
+      max-width: 80%;
+    }
+
+    .form-section {
+      width: 60%;
+      position: absolute;
+      height: 100%;
+      top: 0;
+      transition: transform 0.8s ease;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .form-section.login { left: 40%; }
+    .form-section.register { left: -60%; }
+
+    .container.active .form-section.login { transform: translateX(100%); }
+    .container.active .form-section.register { transform: translateX(100%); }
+    .container.active .logo-section { transform: translateX(150%); }
+
+    .toggle-link {
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .back-link a {
+      color: #222;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .back-link a:hover {
+      color: #007bff;
+    }
+
+    /* ======== MENSAJES ======== */
+    .error {
+      color: #ff4444;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .success {
+      color: #00c851;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* ======== TOAST ======== */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #fff;
+      animation: fadeInOut 4s ease forwards;
+      z-index: 9999;
+    }
+
+    .toast.success { background-color: #00c851; }
+    .toast.error { background-color: #ff4444; }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      10%, 90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(20px); }
+    }

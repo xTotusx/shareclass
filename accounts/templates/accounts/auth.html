@@ -1,68 +1,77 @@
-{% extends 'accounts/base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login / Registro</title>
+<link rel="stylesheet" href="{% static 'accounts/auth.css' %}">
+<link rel="manifest" href="{% static 'accounts/manifest.json' %}">
+<meta name="theme-color" content="#185a9d">
+</head>
+<body>
+  <div class="container" id="authContainer">
+    <div class="logo-section">
+      <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo">
+    </div>
 
-{% block content %}
-<div class="container" id="authContainer">
-  <div class="logo-section">
-    <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo">
-  </div>
+    <!-- LOGIN -->
+    <div class="form-section login">
+      <h2>Iniciar Sesión</h2>
+      {% if error %}<p class="error">{{ error }}</p>{% endif %}
+      {% if success %}<p class="success">{{ success }}</p>{% endif %}
+      <form method="POST" action="{% url 'auth' %}">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit" name="login">Ingresar</button>
+      </form>
+      <p>¿No tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Regístrate</span></p>
 
-  <!-- LOGIN -->
-  <div class="form-section login">
-    <h2>Iniciar Sesión</h2>
-    {% if error %}<p class="error">{{ error }}</p>{% endif %}
-    {% if success %}<p class="success">{{ success }}</p>{% endif %}
-    <form method="POST" action="{% url 'auth' %}">
-      {% csrf_token %}
-      <input type="text" name="username" placeholder="Usuario" required>
-      <input type="password" name="password" placeholder="Contraseña" required>
-      <button type="submit" name="login">Ingresar</button>
-    </form>
-    <p>¿No tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Regístrate</span></p>
+      <div class="back-link">
+        <a href="{% url 'landing' %}">← Volver al inicio</a>
+      </div>
+    </div>
 
-    <div class="back-link">
-      <a href="{% url 'landing' %}">← Volver al inicio</a>
+    <!-- REGISTER -->
+    <div class="form-section register">
+      <h2>Registrarse</h2>
+      {% if error %}<p class="error">{{ error }}</p>{% endif %}
+      {% if success %}<p class="success">{{ success }}</p>{% endif %}
+      <form method="POST" action="{% url 'auth' %}">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="email" name="email" placeholder="Correo electrónico" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit" name="register">Crear cuenta</button>
+      </form>
+      <p>¿Ya tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Inicia sesión</span></p>
+
+      <div class="back-link">
+        <a href="{% url 'landing' %}">← Volver al inicio</a>
+      </div>
     </div>
   </div>
 
-  <!-- REGISTER -->
-  <div class="form-section register">
-    <h2>Registrarse</h2>
-    {% if error %}<p class="error">{{ error }}</p>{% endif %}
-    {% if success %}<p class="success">{{ success }}</p>{% endif %}
-    <form method="POST" action="{% url 'auth' %}">
-      {% csrf_token %}
-      <input type="text" name="username" placeholder="Usuario" required>
-      <input type="email" name="email" placeholder="Correo electrónico" required>
-      <input type="password" name="password" placeholder="Contraseña" required>
-      <button type="submit" name="register">Crear cuenta</button>
-    </form>
-    <p>¿Ya tienes cuenta? <span class="toggle-link" onclick="toggleForms()">Inicia sesión</span></p>
+  <script>
+    function toggleForms() {
+      document.getElementById("authContainer").classList.toggle("active");
+    }
 
-    <div class="back-link">
-      <a href="{% url 'landing' %}">← Volver al inicio</a>
-    </div>
-  </div>
-</div>
+    // ==== TOAST (MENSAJE FLOTANTE) ====
+    const errorMsg = "{{ error|default:'' }}";
+    const successMsg = "{{ success|default:'' }}";
 
-<script>
-  function toggleForms() {
-    document.getElementById("authContainer").classList.toggle("active");
-  }
+    if (errorMsg) showToast(errorMsg, "error");
+    if (successMsg) showToast(successMsg, "success");
 
-  // ==== TOAST (MENSAJE FLOTANTE) ====
-  const errorMsg = "{{ error|default:'' }}";
-  const successMsg = "{{ success|default:'' }}";
+    function showToast(message, type) {
+      const toast = document.createElement("div");
+      toast.classList.add("toast", type);
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
 
-  if (errorMsg) showToast(errorMsg, "error");
-  if (successMsg) showToast(successMsg, "success");
-
-  function showToast(message, type) {
-    const toast = document.createElement("div");
-    toast.classList.add("toast", type);
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-  }
-</script>
-{% endblock %}
+</body>
+</html>

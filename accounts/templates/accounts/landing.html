@@ -1,65 +1,123 @@
-{% extends 'accounts/base.html' %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="manifest" href="{% static 'accounts/manifest.json' %}">
+<meta name="theme-color" content="#185a9d">
+  <meta charset="UTF-8">
+  <title>ShareClass - Bienvenido</title>
+<link rel="stylesheet" href="{% static 'accounts/landing.css' %}">
+</head>
+<body>
+  <!-- SECCIÓN 1: BIENVENIDA -->
+  <section class="hero" id="inicio">
+    <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo ShareClass">
+    <h1>Hola, somos <strong>ShareClass</strong></h1>
+    <p>Una plataforma creada para compartir, aprender y conectar con otros estudiantes y docentes en un entorno colaborativo.</p>
+    <a href="{% url 'auth' %}">Ingresar</a>
+  </section>
 
-{% block content %}
-<!-- SECCIÓN 1: BIENVENIDA -->
-<section class="hero" id="inicio">
-  <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo ShareClass">
-  <h1>Hola, somos <strong>ShareClass</strong></h1>
-  <p>Una plataforma creada para compartir, aprender y conectar con otros estudiantes y docentes en un entorno colaborativo.</p>
-  <a href="{% url 'auth' %}">Ingresar</a>
-</section>
+  <!-- SECCIÓN 2: DESCRIPCIÓN -->
+  <section class="about" id="sobre">
+    <h2>¿Qué es ShareClass?</h2>
+    <p>
+      ShareClass es un espacio digital diseñado para fortalecer el aprendizaje colaborativo.
+      Aquí puedes compartir recursos educativos, apuntes, proyectos y experiencias con otros usuarios.  
+      Nuestra misión es crear una comunidad de aprendizaje accesible, moderna y solidaria, donde el conocimiento se multiplica.
+    </p>
+  </section>
 
-<!-- SECCIÓN 2: DESCRIPCIÓN -->
-<section class="about" id="sobre">
-  <h2>¿Qué es ShareClass?</h2>
-  <p>
-    ShareClass es un espacio digital diseñado para fortalecer el aprendizaje colaborativo.
-    Aquí puedes compartir recursos educativos, apuntes, proyectos y experiencias con otros usuarios.  
-    Nuestra misión es crear una comunidad de aprendizaje accesible, moderna y solidaria, donde el conocimiento se multiplica.
-  </p>
-</section>
+  <!-- SECCIÓN 3: CONTACTO Y FUNDADORES -->
+  <section class="contact" id="contacto">
+    <h2>Contáctanos</h2>
+    <p>Conoce a los fundadores de ShareClass. Puedes escribirnos si deseas colaborar o formar parte del proyecto.</p>
 
-<!-- SECCIÓN 3: CONTACTO Y FUNDADORES -->
-<section class="contact" id="contacto">
-  <h2>Contáctanos</h2>
-  <p>Conoce a los fundadores de ShareClass. Puedes escribirnos si deseas colaborar o formar parte del proyecto.</p>
-
-  <div class="founders">
-    <div class="founder">
-      <img src="{% static 'accounts/founder1.jpeg' %}" alt="Fundador 1">
-      <h3>Andres</h3>
-      <p>Rol o descripción breve.</p>
+    <div class="founders">
+      <div class="founder">
+        <img src="{% static 'accounts/founder1.jpeg' %}" alt="Fundador 1">
+        <h3>Andres</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder2.png' %}" alt="Fundador 2">
+        <h3>Aldo</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder3.jpeg' %}" alt="Fundador 3">
+        <h3>Owen</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
+      <div class="founder">
+        <img src="{% static 'accounts/founder4.jpeg' %}" alt="Fundador 4">
+        <h3>Daniel</h3>
+        <p>Rol o descripción breve.</p>
+      </div>
     </div>
-    <div class="founder">
-      <img src="{% static 'accounts/founder2.png' %}" alt="Fundador 2">
-      <h3>Aldo</h3>
-      <p>Rol o descripción breve.</p>
-    </div>
-    <div class="founder">
-      <img src="{% static 'accounts/founder3.jpeg' %}" alt="Fundador 3">
-      <h3>Owen</h3>
-      <p>Rol o descripción breve.</p>
-    </div>
-    <div class="founder">
-      <img src="{% static 'accounts/founder4.jpeg' %}" alt="Fundador 4">
-      <h3>Daniel</h3>
-      <p>Rol o descripción breve.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== EFECTO DE SCROLL ===== -->
+  <footer>
+    © 2025 ShareClass — Creando comunidad a través del conocimiento.
+  </footer>
+
+  <!-- ===== EFECTO DE SCROLL ===== -->
+  <script>
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => observer.observe(section));
+  </script>
+
 <script>
-const sections = document.querySelectorAll("section");
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-    }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register("{% static 'accounts/service-worker.js' %}")
+      .then(registration => console.log('SW registrado:', registration.scope))
+      .catch(err => console.log('Error SW:', err));
   });
-}, { threshold: 0.3 });
-sections.forEach(section => observer.observe(section));
+}
+
 </script>
-{% endblock %}
+
+<script>
+  // Crear banner dinámico
+  const offlineBanner = document.createElement('div');
+  offlineBanner.textContent = '⚠️ Estás sin conexión';
+  offlineBanner.style.position = 'fixed';
+  offlineBanner.style.bottom = '0';
+  offlineBanner.style.left = '0';
+  offlineBanner.style.width = '100%';
+  offlineBanner.style.backgroundColor = '#ff4b4b';
+  offlineBanner.style.color = 'white';
+  offlineBanner.style.textAlign = 'center';
+  offlineBanner.style.padding = '10px';
+  offlineBanner.style.fontWeight = 'bold';
+  offlineBanner.style.display = 'none';
+  offlineBanner.style.zIndex = '9999';
+  document.body.appendChild(offlineBanner);
+
+  // Detectar cambios de conexión
+  function updateOnlineStatus() {
+    if (navigator.onLine) {
+      offlineBanner.style.display = 'none';
+    } else {
+      offlineBanner.style.display = 'block';
+    }
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+
+  // Estado inicial
+  updateOnlineStatus();
+</script>
+
+</body>
+</html>

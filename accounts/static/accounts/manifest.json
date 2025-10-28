@@ -3,14 +3,19 @@
   "short_name": "ShareClass",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#222222",
   "theme_color": "#185a9d",
-  "description": "Plataforma educativa para compartir y gestionar libros y materiales.",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "/static/accounts/shareclass_logo.jpeg",
+      "src": "/static/accounts/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/accounts/icon-512.jpeg",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }
