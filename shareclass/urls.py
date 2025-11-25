@@ -20,9 +20,25 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView # Importante para el Service Worker
 
+
+def crear_admin_emergencia(request):
+    try:
+        # Verifica si ya existe para no dar error
+        if not User.objects.filter(username='admin').exists():
+            # Crea usuario: admin / email / admin123
+            User.objects.create_superuser('admin', 'admin@shareclass.com', 'admin123')
+            return HttpResponse("✅ ÉXITO: Usuario 'admin' creado. Contraseña: 'admin123'")
+        else:
+            return HttpResponse("ℹ️ AVISO: El usuario 'admin' ya existía.")
+    except Exception as e:
+        return HttpResponse(f"❌ ERROR: {e}")
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+    
+
     # Rutas de tus Apps
     path('', include('accounts.urls')),
     path('libros/', include('libros.urls')),
@@ -31,6 +47,7 @@ urlpatterns = [
     # PWA: Servir el manifest y service worker desde la raíz
     path('manifest.json', TemplateView.as_view(template_name='accounts/manifest.json', content_type='application/json'), name='manifest'),
     path('service-worker.js', TemplateView.as_view(template_name='accounts/service-worker.js', content_type='application/javascript'), name='service-worker'),
+    path('setup-admin/', crear_admin_emergencia), # <--- ESTA ES LA URL MÁGICA
 ]
 
 # Configuración para servir imágenes (media) en modo DEBUG
