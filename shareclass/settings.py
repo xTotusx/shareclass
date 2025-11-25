@@ -147,7 +147,7 @@ STATICFILES_DIRS = [
 ]
 
 # Motor de WhiteNoise para servir los archivos en producción de forma eficiente
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 
 # ==========================================
