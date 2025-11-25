@@ -2,9 +2,16 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.landing, name='landing'),        # Página pública
-    path('home/', views.home, name='home'),         # Página principal (requiere login)
-    path('auth/', views.auth_view, name='auth'),    # Login / registro
-    path('perfil/', views.perfil, name='perfil'),   # Perfil de usuario
-    path('logout/', views.logout_view, name='logout'),  # Cerrar sesión
+    # Páginas normales
+    path('', views.landing, name='landing'),
+    path('home/', views.home, name='home'),
+    path('auth/', views.auth_view, name='auth'),
+    path('perfil/', views.perfil, name='perfil'),
+    path('logout/', views.logout_view, name='logout'),
+
+    # Panel de administración
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'), # Corregido: apunta a admin_dashboard
+    path('usuarios/', views.user_list, name='user_list'),
+    path('cambiar-rol/<int:user_id>/', views.change_role, name='change_role'),
+    path('eliminar/<int:user_id>/', views.delete_user, name='delete_user'),
 ]

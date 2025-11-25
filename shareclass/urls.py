@@ -18,15 +18,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView # Importante para el Service Worker
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),   # rutas de login, home, perfil
-    path('libros/', include('libros.urls')),  # rutas de libros
+    
+    # Rutas de tus Apps
+    path('', include('accounts.urls')),
+    path('libros/', include('libros.urls')),
+    path('dispositivos/', include('dispositivos.urls')),
+    
+    # PWA: Servir el manifest y service worker desde la raíz
+    path('manifest.json', TemplateView.as_view(template_name='accounts/manifest.json', content_type='application/json'), name='manifest'),
+    path('service-worker.js', TemplateView.as_view(template_name='accounts/service-worker.js', content_type='application/javascript'), name='service-worker'),
 ]
 
+# Configuración para servir imágenes (media) en modo DEBUG
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-handler404 = 'accounts.views.error_404'
-handler500 = 'accounts.views.error_500'

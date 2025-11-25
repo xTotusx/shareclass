@@ -10,25 +10,36 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import dj_database_url
 from pathlib import Path
+
+# ==========================================
+# CONFIGURACIÓN PRINCIPAL
+# ==========================================
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o%9)x&k1)b#r^dru!@=$=p$@z8j8$*=8=sohm5^eu5!pwqhy$x'
+# En local usa la string, en Railway busca la variable de entorno
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-o%9)x&k1)b#r^dru!@=$=p$@z8j8$*=8=sohm5^eu5!pwqhy$x')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Por defecto es True (para que trabajes en local sin problemas).
+# En Railway, deberás agregar una variable DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# Permitir todos los hosts (necesario para Railway y acceso local desde móvil)
+ALLOWED_HOSTS = ['*']
+
+# Necesario para el Login en Railway (protección CSRF)
+CSRF_TRUSTED_ORIGINS = ['https://*.up.railway.app']
 
 
-# Application definition
+# ==========================================
+# APLICACIONES INSTALADAS
+# ==========================================
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,13 +47,21 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # 'cloudinary_storage' debe ir ANTES de 'django.contrib.staticfiles' si lo usas para estáticos,
+    # pero para media está bien aquí. Es buena práctica ponerlo arriba.
+    'cloudinary_storage', 
     'django.contrib.staticfiles',
+    'cloudinary', # <--- Librería para imágenes en la nube
+    
+    # Tus Apps
     'accounts',
     'libros', 
+    'dispositivos',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # <--- Motor de CSS para producción
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,7 +75,7 @@ ROOT_URLCONF = 'shareclass.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # <-- Aquí pones la ruta a tu carpeta templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,77 +91,90 @@ TEMPLATES = [
 WSGI_APPLICATION = 'shareclass.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# ==========================================
+# BASE DE DATOS (HÍBRIDA)
+# ==========================================
 
+# 1. Configuración por defecto (TU LOCAL EN LINUX)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'shareclass_db',
+        'USER': 'shareclass_user',
+        'PASSWORD': 'password_segura',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# 2. Configuración para Railway (PRODUCCIÓN)
+# Si Railway inyecta la variable DATABASE_URL, usamos esa base de datos.
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    DATABASES["default"] = dj_database_url.parse(database_url)
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# ==========================================
+# VALIDACIÓN DE CONTRASEÑAS
+# ==========================================
+# Desactivado temporalmente para facilitar desarrollo y pruebas
+AUTH_PASSWORD_VALIDATORS = []
 
-LANGUAGE_CODE = 'en-us'
 
+# ==========================================
+# INTERNACIONALIZACIÓN
+# ==========================================
+
+LANGUAGE_CODE = 'es-mx'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-#Guarda la img
+
+# ==========================================
+# ARCHIVOS ESTÁTICOS (CSS, JS, ICONOS)
+# ==========================================
+
+STATIC_URL = '/static/'
+# Carpeta donde Django recolectará todo al subir a Railway
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Carpetas donde están tus estilos actualmente (Incluimos todas las apps)
+STATICFILES_DIRS = [
+    BASE_DIR / "accounts" / "static",
+    BASE_DIR / "libros" / "static",
+    BASE_DIR / "dispositivos" / "static",
+]
+
+# Motor de WhiteNoise para servir los archivos en producción de forma eficiente
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# ==========================================
+# MEDIA / IMÁGENES (CLOUDINARY)
+# ==========================================
+
+# Configuración de Cloudinary (Las llaves las pondrás en Railway)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# Indicamos a Django que use Cloudinary para guardar los archivos
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+# ==========================================
+# OTRAS CONFIGURACIONES
+# ==========================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# -------------------------
-# Configuraciones de login/logout
-# -------------------------
-LOGIN_URL = 'auth'               # URL de login (auth.html)
-LOGIN_REDIRECT_URL = 'home'      # Redirige al home después del login
-LOGOUT_REDIRECT_URL = 'auth'     # Redirige a auth después del logout
-
-import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "accounts" / "static",
-]
-
-
+# Login / Logout
+LOGIN_URL = 'auth'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'auth'

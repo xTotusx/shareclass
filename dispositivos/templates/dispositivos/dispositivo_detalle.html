@@ -1,0 +1,46 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Detalle | {{ dispositivo.nombre }}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'dispositivos/dispositivo_detalle.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <a href="{% url 'dispositivos_home' %}" class="btn-back">← Volver al Stock</a>
+    
+    <div class="detail-container">
+        <div class="detail-img">
+            {% if dispositivo.imagen %}
+                <img src="{{ dispositivo.imagen.url }}" alt="{{ dispositivo.nombre }}">
+            {% else %}
+                <span class="no-cover-text">Sin imagen</span>
+            {% endif %}
+        </div>
+        
+        <div class="detail-info">
+            <h1 class="detail-title">{{ dispositivo.nombre }}</h1>
+            <p class="detail-author">Marca: {{ dispositivo.marca }}</p>
+            
+            <div class="meta-data">
+                <p class="desc-label"><strong>Detalles Técnicos:</strong></p>
+                <p class="desc-text">
+                    {% if dispositivo.descripcion %}{{ dispositivo.descripcion }}{% else %}Sin descripción.{% endif %}
+                </p>
+            </div>
+
+            <div class="stock-box">Stock: {{ dispositivo.stock }} uds.</div>
+
+            {% if is_admin %}
+            <div class="admin-actions">
+                <a href="{% url 'dispositivo_editar' dispositivo.id %}" class="btn btn-edit">✏️ Editar</a>
+                <a href="{% url 'dispositivo_eliminar' dispositivo.id %}" class="btn btn-delete" 
+                   onclick="return confirm('¿Eliminar este dispositivo?');">🗑️ Eliminar</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

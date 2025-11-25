@@ -1,0 +1,152 @@
+/* REPETIMOS EL FONDO ANIMADO PARA QUE SE VEA IGUAL EN TODAS */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #43cea2, #185a9d, #0f3d5c, #185a9d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #fff;
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn-back {
+    align-self: flex-start;
+    margin-bottom: 1rem;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(0,0,0,0.2);
+    padding: 8px 15px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+/* LA TARJETA PRINCIPAL (GLASSMORPHISM) */
+.detail-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    overflow: hidden; /* Para que la imagen respete el borde */
+}
+
+/* Imagen a la izquierda */
+.detail-img {
+    flex: 1;
+    min-width: 300px;
+    background: rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-height: 500px;
+}
+
+.no-cover-text {
+    color: rgba(255,255,255,0.5);
+    font-size: 1.2rem;
+}
+
+/* Info a la derecha */
+.detail-info {
+    flex: 1.5;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.detail-title {
+    margin: 0;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.detail-author {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.meta-data {
+    background: rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.desc-label { margin: 0 0 5px 0; color: #43cea2; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;}
+.desc-text { line-height: 1.6; margin: 0; opacity: 0.9; }
+
+.stock-box {
+    align-self: flex-start;
+    background: white;
+    color: #185a9d;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Botones de Admin */
+.admin-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: transform 0.2s;
+    border: none;
+    cursor: pointer;
+    flex: 1;
+}
+
+.btn-edit {
+    background: rgba(255, 202, 40, 0.8);
+    color: #333;
+}
+
+.btn-delete {
+    background: rgba(239, 83, 80, 0.8);
+    color: white;
+}
+
+.btn:hover { transform: translateY(-3px); }
+
+/* Responsive para celular */
+@media (max-width: 768px) {
+    .detail-container { flex-direction: column; }
+    .detail-img { min-height: 300px; }
+    .detail-info { padding: 1.5rem; }
+}

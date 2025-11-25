@@ -1,106 +1,273 @@
+{% extends 'accounts/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Inicio</title>
-<link rel="stylesheet" href="{% static 'accounts/home.css' %}">
-<link rel="manifest" href="{% static 'accounts/manifest.json' %}">
-<meta name="theme-color" content="#185a9d">
-</head>
-<body>
 
-  <!-- NAVBAR -->
-  <nav>
-    <div class="logo">
-      <a href="#"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
-    </div>
-    <ul>
-      <li><a href="#inicio">Inicio</a></li>
-      <li><a href="#libros">Libros</a></li>
-      <li><a href="#dispositivos">Dispositivos</a></li>
-      <li><a href="{% url 'perfil' %}">Perfil</a></li>
-      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
-    </ul>
-  </nav>
+{% block title %}Inicio | ShareClass{% endblock %}
 
-  <!-- SECCIÓN 1: BIENVENIDA -->
-  <section id="inicio" class="visible">
-    <div class="welcome">
-      <div class="welcome-text">
-        <h1>Bienvenido, {{ user.username }} 👋</h1>
-        <p>Explora tus libros y dispositivos desde aquí.</p>
-      </div>
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
+  
+  <style>
+    /* =========================================
+       CORRECCIÓN DE SCROLL (CRÍTICO)
+       ========================================= */
+    html, body {
+        height: auto !important;       /* Permite que la página crezca */
+        min-height: 100vh;             /* Al menos del tamaño de la pantalla */
+        overflow-y: auto !important;   /* HABILITA EL SCROLL VERTICAL */
+        overflow-x: hidden;            /* Evita que aparezca barra horizontal por las animaciones */
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Ajuste para que el navbar fijo no tape el contenido */
+    section { 
+        padding-top: 60px; 
+    }
+
+    /* =========================================
+       HERO (AVATAR)
+       ========================================= */
+    .hero-section {
+      text-align: center;
+      padding: 4rem 1rem 2rem 1rem; /* Más espacio arriba */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      /* Quitamos height fija para permitir scroll si la pantalla es chica */
+      min-height: 45vh; 
+      position: relative;
+      z-index: 2;
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin-bottom: 1rem;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .profile-avatar {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      position: relative; z-index: 2;
+    }
+
+    .avatar-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #43cea2, #185a9d);
+      filter: blur(25px);
+      z-index: 1;
+      opacity: 0.6;
+      animation: pulseGlow 3s infinite alternate;
+    }
+
+    .username-highlight {
+      background: linear-gradient(to right, #ffffff, #a8e0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block; font-size: 2.8rem; font-weight: 800;
+      margin-top: 0.2rem;
+      text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .hero-text p {
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(0,0,0,0.3);
+      padding: 5px 15px; border-radius: 20px;
+      display: inline-block;
+      backdrop-filter: blur(5px);
+    }
+
+    /* =========================================
+       FONDO ANIMADO (MARQUEE)
+       ========================================= */
+    .dynamic-section {
+      position: relative;
+      overflow: hidden; 
+      min-height: 350px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 3rem; /* Espacio extra abajo para poder scrollear hasta el final */
+      border-radius: 16px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    }
+
+    .marquee-container {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.4;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .marquee-row {
+      display: flex;
+      width: 200%;
+      gap: 15px;
+    }
+
+    .marquee-item {
+      width: 120px;
+      height: 160px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      filter: grayscale(30%);
+    }
+
+    .scroll-left { animation: scrollLeft 30s linear infinite; }
+    .scroll-right { animation: scrollRight 35s linear infinite; }
+
+    @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+
+    /* TARJETA DE CRISTAL */
+    .glass-card-overlay {
+      position: relative;
+      z-index: 5;
+      background: rgba(15, 61, 92, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      transition: transform 0.3s;
+    }
+
+    .glass-card-overlay:hover { transform: scale(1.02); }
+    .glass-card-overlay h2 { font-size: 2rem; margin: 0 0 10px 0; color: white; }
+    .glass-card-overlay p { color: rgba(255,255,255,0.8); margin-bottom: 20px; }
+    
+    .btn-glass {
+      background: white; color: #185a9d;
+      padding: 12px 30px; border-radius: 30px;
+      font-weight: bold; text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+    .btn-glass:hover {
+      background: #43cea2; color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(67, 206, 162, 0.4);
+    }
+
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes pulseGlow { 0% { transform: translate(-50%, -50%) scale(0.9); opacity:0.5; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity:0.8; } }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <section id="inicio" class="hero-section visible">
+    <div class="avatar-container">
+      <div class="avatar-glow"></div>
       {% if user.profile.profile_image %}
-        <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" alt="Avatar">
+        <img src="{% static 'accounts/' %}{{ user.profile.profile_image }}" class="profile-avatar" alt="Avatar">
+      {% else %}
+        <img src="{% static 'accounts/avatar_pp1.jpeg' %}" class="profile-avatar" alt="Avatar">
       {% endif %}
     </div>
-  </section>
-
-  <!-- SECCIÓN 2: LIBROS -->
-  <section id="libros">
-    <div class="glass-section">
-      <h2>📚 Libros</h2>
-      <p>Gestiona tus libros, agrégalos o edita su información fácilmente.</p>
-      <a href="{% url 'libros_home' %}">Ir a Libros</a>
+    <div class="hero-text">
+      <h1>Hola, <span class="username-highlight">{{ user.username }}</span></h1>
+      <p>✨ Tu inventario está listo.</p>
     </div>
   </section>
 
-  <!-- SECCIÓN 3: DISPOSITIVOS -->
-  <section id="dispositivos">
-    <div class="glass-section">
+  <div class="dynamic-section" id="libros">
+    <div class="marquee-container">
+        <div class="marquee-row scroll-left">
+            <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+        </div>
+        <div class="marquee-row scroll-right" style="margin-top: 20px;">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+        </div>
+    </div>
+
+    <div class="glass-card-overlay">
+      <h2>📚 Biblioteca</h2>
+      <p>Accede a un océano de conocimiento. Gestiona tus libros, portadas y autores favoritos.</p>
+      <a href="{% url 'libros_home' %}" class="btn-glass">Ir a la Biblioteca</a>
+    </div>
+  </div>
+
+  <div class="dynamic-section" id="dispositivos">
+    <div class="marquee-container">
+        <div class="marquee-row scroll-left">
+            <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+        </div>
+        <div class="marquee-row scroll-right" style="margin-top: 20px;">
+            <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+            <img src="https://images.unsplash.com/photo-1531297461136-82lw9b2c7e09?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+             <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+             <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=60" class="marquee-item">
+        </div>
+    </div>
+
+    <div class="glass-card-overlay">
       <h2>💻 Dispositivos</h2>
-      <p>Visualiza y gestiona los dispositivos conectados a tu cuenta.</p>
-      <a href="#dispositivos">Ver dispositivos</a>
+      <p>Tecnología a tu alcance. Controla el inventario de hardware y periféricos.</p>
+      <a href="{% url 'dispositivos_home' %}" class="btn-glass">Ver Dispositivos</a>
     </div>
-  </section>
+  </div>
 
-  <!-- ===== EFECTO DE SCROLL ===== -->
   <script>
-    const sections = document.querySelectorAll("section");
-
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
+        if (entry.isIntersecting) entry.target.classList.add("visible");
       });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.2 });
+    document.querySelectorAll("section, .dynamic-section").forEach(s => observer.observe(s));
 
-    sections.forEach(section => observer.observe(section));
+    const offlineBanner = document.createElement('div');
+    offlineBanner.textContent = '⚠️ Sin conexión';
+    offlineBanner.style.cssText = "position:fixed; bottom:0; left:0; width:100%; background:#ff4b4b; color:white; text-align:center; padding:10px; font-weight:bold; display:none; z-index:9999;";
+    document.body.appendChild(offlineBanner);
+    function updateOnlineStatus() { offlineBanner.style.display = navigator.onLine ? 'none' : 'block'; }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
   </script>
-<script>
-  // Crear banner dinámico
-  const offlineBanner = document.createElement('div');
-  offlineBanner.textContent = '⚠️ Estás sin conexión';
-  offlineBanner.style.position = 'fixed';
-  offlineBanner.style.bottom = '0';
-  offlineBanner.style.left = '0';
-  offlineBanner.style.width = '100%';
-  offlineBanner.style.backgroundColor = '#ff4b4b';
-  offlineBanner.style.color = 'white';
-  offlineBanner.style.textAlign = 'center';
-  offlineBanner.style.padding = '10px';
-  offlineBanner.style.fontWeight = 'bold';
-  offlineBanner.style.display = 'none';
-  offlineBanner.style.zIndex = '9999';
-  document.body.appendChild(offlineBanner);
 
-  // Detectar cambios de conexión
-  function updateOnlineStatus() {
-    if (navigator.onLine) {
-      offlineBanner.style.display = 'none';
-    } else {
-      offlineBanner.style.display = 'block';
-    }
-  }
-
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
-
-  // Estado inicial
-  updateOnlineStatus();
-</script>
-
-</body>
-</html>
+{% endblock %}

@@ -1,96 +1,292 @@
+{% extends 'accounts/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Perfil</title>
-<link rel="stylesheet" href="{% static 'accounts/perfil.css' %}">
-<link rel="manifest" href="{% static 'accounts/manifest.json' %}">
-<meta name="theme-color" content="#185a9d">
-</head>
-<body>
 
-  <!-- Barra de navegación -->
-  <nav>
-    <div class="logo">
-      <a href="{% url 'home' %}"><img src="{% static 'accounts/sh_logo.png' %}" alt="Logo"></a>
-    </div>
-    <ul>
-      <li><a href="{% url 'home' %}">Inicio</a></li>
-      <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
-    </ul>
-  </nav>
+{% block title %}Mi Perfil | ShareClass{% endblock %}
 
-  <!-- Caja de perfil -->
-  <div class="profile-box">
-    <h1>Perfil de {{ user.username }}</h1>
-    <div class="profile-info">
-      <p><strong>Nombre de usuario:</strong> {{ user.username }}</p>
-      <p><strong>Correo:</strong> {{ user.email }}</p>
-    </div>
+{% block styles %}
+<style>
+    /* AJUSTE PARA NAVBAR FIJO */
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #43cea2, #185a9d, #0f3d5c, #185a9d);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+    }
+    
+    .profile-container {
+        padding-top: 80px; 
+        padding-bottom: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+        width: 95%;
+    }
 
-    <!-- Avatar actual (vista previa) -->
-    <div class="selected-avatar" id="selectedAvatar">
-      {% if profile_image %}
-        <img id="selectedAvatarImg" src="{% static 'accounts/' %}{{ profile_image }}" alt="Avatar seleccionado">
-      {% else %}
-        <img id="selectedAvatarImg" src="{% static 'accounts/avatar_pp1.jpeg' %}" alt="Avatar por defecto">
-      {% endif %}
-    </div>
+    /* TARJETA PRINCIPAL (GLASSMORPHISM) */
+    .profile-card {
+        background: rgba(15, 61, 92, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 3rem 2rem;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
 
-    <!-- Formulario: selección + guardar -->
-    <form method="post" action="{% url 'perfil' %}">
-      {% csrf_token %}
-      <div class="profile-avatars">
-        <h3>Elige tu avatar</h3>
-        <div class="avatars">
-          {% for i in "123456789" %}
-            <label>
-              <input type="radio" name="profile_image" value="avatar_pp{{ i }}.jpeg" {% if profile_image == "avatar_pp"|add:i|add:".jpeg" %}checked{% endif %}>
-              <img src="{% static 'accounts/avatar_pp' %}{{ i }}.jpeg" class="avatar" alt="avatar {{ i }}">
-            </label>
-          {% endfor %}
+    /* HEADER DEL PERFIL */
+    .profile-header {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    /* Avatar Grande Animado */
+    .main-avatar-wrapper {
+        position: relative;
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    .main-avatar {
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 0 25px rgba(67, 206, 162, 0.5);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .main-avatar.pop { transform: scale(1.1); }
+
+    /* Nombre y Rol */
+    .profile-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(to right, #fff, #43cea2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .profile-email {
+        color: rgba(255,255,255,0.7);
+        font-size: 1.1rem;
+        margin-top: 5px;
+    }
+
+    .role-badge {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .role-admin { background: linear-gradient(45deg, #ff416c, #ff4b1f); color: white; }
+    .role-alumno { background: linear-gradient(45deg, #11998e, #38ef7d); color: #0f3d5c; }
+
+    /* SECCIÓN DE EDICIÓN (SELECTOR DE AVATAR) */
+    .edit-section {
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .edit-title {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+        color: rgba(255,255,255,0.9);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 10px;
+        display: inline-block;
+    }
+
+    /* GRID DE AVATARES */
+    .avatars-grid {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .avatars-grid input[type="radio"] { display: none; }
+
+    .avatar-option {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+        opacity: 0.7;
+    }
+
+    .avatar-option img {
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .avatar-option:hover { transform: scale(1.1); opacity: 1; }
+
+    .avatars-grid input[type="radio"]:checked + .avatar-option {
+        border-color: #43cea2;
+        box-shadow: 0 0 15px #43cea2;
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    /* BOTONES */
+    .btn-save {
+        background: white;
+        color: #185a9d;
+        font-weight: bold;
+        padding: 12px 40px;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        background: #43cea2;
+        color: white;
+    }
+
+    /* ZONA ADMIN */
+    .admin-zone {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px dashed rgba(255,255,255,0.2);
+    }
+
+    .admin-btns-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-admin-shortcut {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 65, 108, 0.15); /* Fondo base rojizo tenue */
+        color: #ff9068;
+        padding: 10px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: bold;
+        border: 1px solid rgba(255, 65, 108, 0.3);
+        transition: all 0.3s;
+    }
+
+    .btn-admin-shortcut:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <div class="profile-card">
+        
+        <div class="profile-header">
+            <div class="main-avatar-wrapper">
+                {% if profile.profile_image %}
+                    <img id="previewAvatar" src="{% static 'accounts/'|add:profile.profile_image %}" class="main-avatar" alt="Avatar">
+                {% else %}
+                    <img id="previewAvatar" src="{% static 'accounts/avatar_pp1.jpeg' %}" class="main-avatar" alt="Avatar">
+                {% endif %}
+            </div>
+
+            <h1 class="profile-name">{{ user.username }}</h1>
+            <p class="profile-email">{{ user.email }}</p>
+
+            {% if profile.role == "admin" or user.is_superuser %}
+                <span class="role-badge role-admin">🛡️ Administrador</span>
+            {% else %}
+                <span class="role-badge role-alumno">🎓 Alumno</span>
+            {% endif %}
         </div>
 
-        <button type="submit" class="save-btn">Guardar</button>
-      </div>
-    </form>
+        <div class="edit-section">
+            <span class="edit-title">Personaliza tu Avatar</span>
+            <form method="post" action="{% url 'perfil' %}">
+                {% csrf_token %}
+                <div class="avatars-grid">
+                    {% for i in "123456789" %}
+                    <label>
+                        <input type="radio" name="profile_image" value="avatar_pp{{ i }}.jpeg"
+                               data-src="{% static 'accounts/avatar_pp' %}{{ i }}.jpeg"
+                               {% if profile.profile_image == "avatar_pp"|add:i|add:".jpeg" %}checked{% endif %}>
+                        <div class="avatar-option">
+                            <img src="{% static 'accounts/avatar_pp' %}{{ i }}.jpeg" alt="Opción {{ i }}">
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn-save">Guardar Cambios</button>
+            </form>
+        </div>
 
-    <div class="profile-options" style="margin-top:1.5rem;">
-      <a href="#">Cambiar contraseña</a>
-      <a href="{% url 'logout' %}">Cerrar sesión</a>
+        {% if profile.role == "admin" or user.is_superuser %}
+        <div class="admin-zone">
+            <h4 style="color: rgba(255,255,255,0.6); margin-bottom:1rem; text-transform:uppercase; font-size:0.9rem;">Acceso Rápido Administrativo</h4>
+            
+            <div class="admin-btns-container">
+                <a href="{% url 'admin_dashboard' %}" class="btn-admin-shortcut">
+                    📊 Dashboard
+                </a>
+                <a href="{% url 'user_list' %}" class="btn-admin-shortcut">
+                    👥 Usuarios
+                </a>
+                
+                <a href="{% url 'libros_home' %}" class="btn-admin-shortcut" style="border-color:#43cea2; color:#43cea2;">
+                    📚 Libros
+                </a>
+                
+                <a href="{% url 'dispositivos_home' %}" class="btn-admin-shortcut" style="border-color:#00c6ff; color:#00c6ff;">
+                    💻 Equipos
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
-  </div>
+</div>
 
-  <script>
-    // UI: al hacer click en la imagen marca el radio y actualiza la vista previa
-    document.querySelectorAll('.avatars label img').forEach(img => {
-      img.addEventListener('click', () => {
-        const input = img.parentElement.querySelector('input[type="radio"]');
-        if (input) input.checked = true;
+<script>
+    const radios = document.querySelectorAll('input[name="profile_image"]');
+    const preview = document.getElementById('previewAvatar');
 
-        document.querySelectorAll('.avatar').forEach(a => a.classList.remove('selected'));
-        img.classList.add('selected');
-
-        // Actualiza la imagen previa
-        const preview = document.getElementById('selectedAvatarImg');
-        if (preview) preview.src = img.src;
-      });
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                const newSrc = this.getAttribute('data-src');
+                preview.classList.remove('pop');
+                void preview.offsetWidth; 
+                preview.src = newSrc;
+                preview.classList.add('pop');
+            }
+        });
     });
-
-    // on load: marcar visualmente la img que corresponde al radio checked
-    window.addEventListener('DOMContentLoaded', () => {
-      const checked = document.querySelector('.avatars input[type="radio"]:checked');
-      if (checked) {
-        const img = checked.parentElement.querySelector('img');
-        if (img) {
-          img.classList.add('selected');
-          const preview = document.getElementById('selectedAvatarImg');
-          if (preview) preview.src = img.src;
-        }
-      }
-    });
-  </script>
-
-</body>
-</html>
+</script>
+{% endblock %}

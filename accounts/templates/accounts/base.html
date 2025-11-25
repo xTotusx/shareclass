@@ -4,30 +4,174 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="manifest" href="{% static 'accounts/manifest.json' %}">
   <meta name="theme-color" content="#185a9d">
 
   <title>{% block title %}ShareClass{% endblock %}</title>
 
-  {% block styles %}
+  <style>
+    /* =========================================
+       ESTILOS DEL MENÚ MAESTRO
+       ========================================= */
+    .menu-container {
+      position: relative;
+      display: inline-block;
+    }
 
+    /* El botón principal del menú */
+    .menu-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: background 0.3s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* El contenido desplegable */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0; /* Alineado a la derecha para no salirse del margen */
+      top: 110%; /* Justo debajo del botón */
+      background-color: rgba(15, 61, 92, 0.95); /* Azul oscuro corporativo */
+      min-width: 220px;
+      box-shadow: 0px 8px 30px rgba(0,0,0,0.5);
+      border-radius: 12px;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255,255,255,0.1);
+      z-index: 10000;
+      overflow: hidden;
+      padding: 5px 0;
+    }
+
+    /* Enlaces del menú */
+    .dropdown-content a {
+      color: white !important;
+      padding: 12px 20px;
+      text-decoration: none;
+      display: block;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.2s, padding-left 0.2s;
+    }
+
+    .dropdown-content a:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-content a:hover {
+      background-color: rgba(255,255,255,0.1);
+      padding-left: 25px; /* Pequeño efecto de movimiento */
+      color: #43cea2 !important; /* Color de acento al hover */
+    }
+
+    /* Separadores de sección (ej: "ADMINISTRACIÓN") */
+    .menu-divider {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      padding: 10px 20px 5px 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+      pointer-events: none; /* No clickeable */
+      margin-top: 5px;
+    }
+
+    /* Mostrar menú al pasar el mouse (hover) */
+    .menu-container:hover .dropdown-content {
+      display: block;
+      animation: slideIn 0.2s ease-out;
+    }
+
+    /* Animación de entrada */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Botón especial de cerrar sesión */
+    .logout-link {
+      background: rgba(255, 75, 75, 0.1);
+    }
+    .logout-link:hover {
+      background: rgba(255, 75, 75, 0.3) !important;
+      color: white !important;
+    }
+
+  </style>
+
+  {% block styles %}
   {% endblock %}
 </head>
+
 <body>
+
   {% if user.is_authenticated %}
-  <nav style="position:sticky;top:0;width:100%;padding:1rem 2rem;background:rgba(0,0,0,0.3);display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(5px);border-bottom:1px solid rgba(255,255,255,0.1);">
+  <nav style="
+    position:sticky;
+    top:0;
+    width:100%;
+    padding:1rem 2rem;
+    background:rgba(0,0,0,0.3);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    z-index: 9999;
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+  ">
+    
     <div class="logo">
-      <a href="{% url 'home' %}"><img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo" style="height:40px;"></a>
+      <a href="{% url 'home' %}">
+        <img src="{% static 'accounts/shareclass_logo.jpeg' %}" alt="Logo" style="height:45px; border-radius: 8px; vertical-align: middle;">
+      </a>
     </div>
-    <ul style="list-style:none;display:flex;gap:1.5rem;margin:0;padding:0;">
-      <li><a href="{% url 'home' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Inicio</a></li>
-      <li><a href="{% url 'perfil' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Perfil</a></li>
-      <li><a href="{% url 'logout' %}" style="color:#fff;text-decoration:none;font-weight:bold;">Cerrar sesión</a></li>
-    </ul>
+
+    <div class="menu-container">
+      <div class="menu-btn">
+        <span>Menú</span>
+        <span style="font-size:1.2rem;">☰</span>
+      </div>
+
+      <div class="dropdown-content">
+        <a href="{% url 'home' %}">🏠 Inicio</a>
+        
+        <div class="menu-divider">Inventario</div>
+        <a href="{% url 'libros_home' %}">📚 Biblioteca</a>
+        <a href="{% url 'dispositivos_home' %}">💻 Dispositivos</a>
+
+        <div class="menu-divider">Mi Cuenta</div>
+        <a href="{% url 'perfil' %}">👤 Perfil</a>
+
+        {% if request.user.profile.role == "admin" or request.user.is_superuser %}
+          <div class="menu-divider" style="color: #ff9068;">Administración</div>
+          <a href="{% url 'admin_dashboard' %}">📊 Panel de Control</a>
+          <a href="{% url 'user_list' %}">👥 Gestión de Usuarios</a>
+        {% endif %}
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top:5px;"></div>
+        <a href="{% url 'logout' %}" class="logout-link">🚪 Cerrar sesión</a>
+      </div>
+    </div>
+
   </nav>
   {% endif %}
 
-  {% block content %}{% endblock %}
+  {% block content %}
+  {% endblock %}
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -38,5 +182,6 @@
       });
     }
   </script>
+
 </body>
 </html>

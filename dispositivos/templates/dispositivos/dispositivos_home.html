@@ -1,0 +1,60 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Equipos | ShareClass{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'dispositivos/dispositivos_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <form method="GET" action="{% url 'dispositivos_home' %}" class="search-box">
+        <input type="text" name="q" placeholder="Buscar dispositivo o marca..." value="{{ query }}" class="search-input">
+        <button type="submit" class="search-btn">🔍</button>
+    </form>
+</div>
+
+<div class="books-grid">
+    {% for d in dispositivos %}
+    <a href="{% url 'dispositivo_detalle' d.id %}" class="book-card">
+        {% if d.imagen %}
+            <img src="{{ d.imagen.url }}" alt="{{ d.nombre }}" class="book-cover">
+        {% else %}
+            <div class="book-cover no-cover">Sin imagen</div>
+        {% endif %}
+        
+        <div class="book-info">
+            <h3 class="book-title">{{ d.nombre }}</h3>
+            <p class="book-author">{{ d.marca }}</p>
+            <span class="stock-badge">Stock: {{ d.stock }}</span>
+        </div>
+    </a>
+    {% empty %}
+    <div class="no-results"><p>No hay dispositivos registrados.</p></div>
+    {% endfor %}
+</div>
+
+{% if is_admin %}
+    <button class="fab-add" onclick="document.getElementById('addModal').style.display='flex'">+</button>
+
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('addModal').style.display='none'">&times;</button>
+            <h2 class="modal-title">Nuevo Dispositivo</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group"><label>Nombre</label><input type="text" name="nombre" required></div>
+                <div class="form-group"><label>Marca/Modelo</label><input type="text" name="marca" required></div>
+                <div class="form-group"><label>Descripción</label><textarea name="descripcion" rows="3"></textarea></div>
+                <div class="form-group"><label>Stock</label><input type="number" name="stock" value="1" min="0"></div>
+                <div class="form-group"><label>Imagen</label><input type="file" name="imagen" accept="image/*"></div>
+                <button type="submit" class="btn-submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        window.onclick = function(e) { if(e.target == document.getElementById('addModal')) document.getElementById('addModal').style.display = "none"; }
+    </script>
+{% endif %}
+{% endblock %}
