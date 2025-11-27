@@ -119,41 +119,57 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# ... (Todo lo anterior está bien) ...
+
 # ==========================================
-# ARCHIVOS ESTÁTICOS (CONFIGURACIÓN BYPASS)
+#  NUEVA CONFIGURACIÓN UNIFICADA (DJANGO 5)
 # ==========================================
 
+STORAGES = {
+    # 1. ESTÁTICOS (CSS): Usamos WhiteNoise con compresión segura
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+    
+    # 2. MEDIA (IMÁGENES): Usamos Cloudinary
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+}
+
+# ==========================================
+#  CONFIGURACIÓN DETALLADA
+# ==========================================
+
+# --- Estáticos (CSS/JS) ---
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Dónde buscar (Tus carpetas originales)
+# Dónde buscar tus archivos CSS originales
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'accounts/static'),
     os.path.join(BASE_DIR, 'libros/static'),
     os.path.join(BASE_DIR, 'dispositivos/static'),
 ]
 
-# --- LA MAGIA ESTÁ AQUÍ ---
-# 1. Usamos el storage normal (sin compresión estricta)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# 2. IMPORTANTE: Le decimos a WhiteNoise que busque los archivos en tiempo real
-# Esto evita que necesitemos el comando collectstatic que está fallando.
+# Activamos el modo "Buscador en tiempo real" para evitar el error de collectstatic
 WHITENOISE_USE_FINDERS = True 
 WHITENOISE_AUTOREFRESH = True
 
-# ==========================================
-# MEDIA / IMÁGENES (CLOUDINARY)
-# ==========================================
-
+# --- Media (Cloudinary) ---
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Almacenamiento de archivos en Cloudinary
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# URLs públicas para archivos
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 🛑 NOTA: Ya no usamos DEFAULT_FILE_STORAGE ni STATICFILES_STORAGE
+# porque ahora todo está dentro del diccionario STORAGES de arriba.
+
 
 # ==========================================
 # LOGIN / LOGOUT
