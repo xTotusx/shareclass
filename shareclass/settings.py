@@ -141,9 +141,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Carpetas donde están tus estilos actualmente (Incluimos todas las apps)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'accounts/static'),
-    os.path.join(BASE_DIR, 'libros/static'),
-    os.path.join(BASE_DIR, 'dispositivos/static'),
+    BASE_DIR / "accounts" / "static",
+    BASE_DIR / "libros" / "static",
+    BASE_DIR / "dispositivos" / "static",
 ]
 
 # Motor de WhiteNoise para servir los archivos en producción de forma eficiente
