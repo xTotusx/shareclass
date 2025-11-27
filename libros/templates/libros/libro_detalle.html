@@ -91,7 +91,6 @@
 
             <div class="loan-section">
                 
-                {% assign has_book = False %}
                 {% for prestamo in libro.prestamos.all %}
                     {% if prestamo.usuario == request.user and not prestamo.devuelto %}
                         
