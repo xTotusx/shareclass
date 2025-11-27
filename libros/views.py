@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .models import Libro
+from django.utils import timezone # Importante para la fecha de devolución
+from .models import Libro, Prestamo # Agregamos Prestamo
 
-# Helper para verificar admin (mismo criterio que en accounts)
+# Helper para verificar admin
 def is_admin(user):
     try:
         if user.is_superuser: return True
@@ -37,16 +38,15 @@ def libros_home(request):
     query = request.GET.get('q')
     if query:
         libros = Libro.objects.filter(titulo__icontains=query) | Libro.objects.filter(autor__icontains=query)
-        # Si solo hay uno, vamos directo al detalle
         if libros.count() == 1:
             return redirect('libro_detalle', libro_id=libros.first().id)
     else:
-        libros = Libro.objects.all().order_by('-id') # Los más nuevos primero
+        libros = Libro.objects.all().order_by('-id')
 
     context = {
         'libros': libros, 
         'query': query if query else "",
-        'is_admin': is_admin(request.user) # Pasamos el booleano al template
+        'is_admin': is_admin(request.user)
     }
     return render(request, 'libros/libros_home.html', context)
 
@@ -62,7 +62,6 @@ def libro_detalle(request, libro_id):
 
 @login_required(login_url='auth')
 def libro_editar(request, libro_id):
-    # Protección de ruta
     if not is_admin(request.user):
         return redirect('libros_home')
 
@@ -87,7 +86,6 @@ def libro_editar(request, libro_id):
 
 @login_required(login_url='auth')
 def libro_eliminar(request, libro_id):
-    # Protección de ruta
     if not is_admin(request.user):
         return redirect('libros_home')
         
@@ -95,3 +93,51 @@ def libro_eliminar(request, libro_id):
     libro.delete()
     messages.success(request, "Libro eliminado del inventario.")
     return redirect('libros_home')
+
+
+# ==========================================
+# NUEVAS VISTAS DE PRÉSTAMOS
+# ==========================================
+
+@login_required(login_url='auth')
+def prestar_libro(request, libro_id):
+    libro = get_object_or_404(Libro, id=libro_id)
+    
+    # 1. Verificar si hay stock
+    if libro.stock > 0:
+        # 2. Crear registro de préstamo
+        Prestamo.objects.create(libro=libro, usuario=request.user)
+        
+        # 3. Restar del inventario
+        libro.stock -= 1
+        libro.save()
+        
+        messages.success(request, f"Has tomado prestado '{libro.titulo}'.")
+    else:
+        messages.error(request, "Lo sentimos, este libro está agotado temporalmente.")
+        
+    return redirect('libro_detalle', libro_id=libro.id)
+
+
+@login_required(login_url='auth')
+def devolver_libro(request, prestamo_id):
+    # Buscamos el préstamo específico que NO ha sido devuelto aún
+    prestamo = get_object_or_404(Prestamo, id=prestamo_id, devuelto=False)
+    
+    # Seguridad: Solo el dueño o un admin pueden devolverlo
+    if prestamo.usuario != request.user and not is_admin(request.user):
+        messages.error(request, "No puedes devolver un libro que no tienes.")
+        return redirect('libro_detalle', libro_id=prestamo.libro.id)
+
+    # 1. Marcar como devuelto
+    prestamo.devuelto = True
+    prestamo.fecha_devolucion = timezone.now()
+    prestamo.save()
+    
+    # 2. Sumar al inventario
+    libro = prestamo.libro
+    libro.stock += 1
+    libro.save()
+    
+    messages.success(request, f"Has devuelto '{libro.titulo}'. ¡Gracias!")
+    return redirect('libro_detalle', libro_id=libro.id)
