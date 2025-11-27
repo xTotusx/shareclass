@@ -119,25 +119,28 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 # ==========================================
-# ARCHIVOS ESTÁTICOS (CONFIGURACIÓN ROBUSTA)
+# ARCHIVOS ESTÁTICOS (CONFIGURACIÓN BYPASS)
 # ==========================================
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# IMPORTANTE: Activamos los buscadores automáticos
-# Esto hace que Django busque solito en 'accounts/static', 'libros/static', etc.
-# No hace falta poner STATICFILES_DIRS manuales si la estructura es estándar.
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+# Dónde buscar (Tus carpetas originales)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'accounts/static'),
+    os.path.join(BASE_DIR, 'libros/static'),
+    os.path.join(BASE_DIR, 'dispositivos/static'),
 ]
 
-# Usamos almacenamiento comprimido que no crashea si falta un archivo
+# --- LA MAGIA ESTÁ AQUÍ ---
+# 1. Usamos el storage normal (sin compresión estricta)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+# 2. IMPORTANTE: Le decimos a WhiteNoise que busque los archivos en tiempo real
+# Esto evita que necesitemos el comando collectstatic que está fallando.
+WHITENOISE_USE_FINDERS = True 
+WHITENOISE_AUTOREFRESH = True
 
 # ==========================================
 # MEDIA / IMÁGENES (CLOUDINARY)
