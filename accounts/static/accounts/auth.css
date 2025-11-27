@@ -144,3 +144,101 @@
       10%, 90% { opacity: 1; transform: translateY(0); }
       100% { opacity: 0; transform: translateY(20px); }
     }
+
+    /* =========================================
+   RESPONSIVE DESIGN (MÓVIL)
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* 1. Ajuste del Cuerpo para Celulares */
+    body {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
+        /* Evita que el teclado tape el input en algunos móviles */
+        align-items: flex-start; 
+        padding-top: 40px; 
+    }
+
+    /* 2. Contenedor: Se vuelve vertical y flexible */
+    .container {
+        width: 100%;
+        max-width: 450px;
+        height: 600px; /* Más alto para que quepan los inputs */
+        flex-direction: column; /* Apilar verticalmente */
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* 3. Sección del Logo: Se va arriba y se queda quieta */
+    .logo-section {
+        width: 100%;
+        height: 120px; /* Banner superior */
+        position: relative;
+        top: 0;
+        transform: none !important; /* Anulamos el movimiento lateral */
+        order: -1; /* Forzamos que esté arriba */
+        z-index: 10;
+        border-bottom: 1px solid #eee;
+    }
+
+    .logo-section img {
+        max-height: 80px;
+        width: auto;
+    }
+
+    /* 4. Formularios: Ocupan el espacio restante */
+    .form-section {
+        width: 100%;
+        height: calc(100% - 120px); /* Resto del espacio */
+        top: 120px; /* Justo debajo del logo */
+        left: 0 !important; /* Anulamos el left: 40% / -60% */
+        padding: 20px;
+        background: white;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+        /* Centrar contenido */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* 5. Lógica de Cambio en Móvil (Fade en lugar de Slide) */
+    
+    /* ESTADO INICIAL (LOGIN VISIBLE) */
+    .form-section.login {
+        opacity: 1;
+        z-index: 5;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    /* ESTADO INICIAL (REGISTER OCULTO) */
+    .form-section.register {
+        opacity: 0;
+        z-index: 1;
+        transform: translateY(20px); /* Efecto de entrada desde abajo */
+        pointer-events: none;
+    }
+
+    /* CUANDO SE ACTIVA EL REGISTRO (.active) */
+    
+    /* Login desaparece */
+    .container.active .form-section.login {
+        transform: translateY(-20px) !important; /* Se va hacia arriba */
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Register aparece */
+    .container.active .form-section.register {
+        transform: translateY(0) !important; /* Entra a su lugar */
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* El logo se queda quieto en móvil */
+    .container.active .logo-section {
+        transform: none !important;
+    }
+}
